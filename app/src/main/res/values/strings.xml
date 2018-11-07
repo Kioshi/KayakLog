@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">KayakLog</string>
+    <string name="LoginStringValue">Login</string>
+    <string name="SignUpStringValue">SignUp</string>
 </resources>
