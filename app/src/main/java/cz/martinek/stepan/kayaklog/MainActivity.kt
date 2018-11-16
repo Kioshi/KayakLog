@@ -27,6 +27,7 @@ class MainActivity : AppCompatActivity() {
     }
     //Intent
     private fun tripAction(){
+
         val intent = Intent(this, TripActivity::class.java)
         startActivity(intent)
     }
