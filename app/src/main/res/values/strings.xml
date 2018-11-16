@@ -2,4 +2,7 @@
     <string name="app_name">KayakLog</string>
     <string name="LoginStringValue">Login</string>
     <string name="SignUpStringValue">SignUp</string>
+    <string name="StartTrip">StartTrip</string>
+    <string name="log">Log</string>
+    <string name="achievements">Achievements</string>
 </resources>
