@@ -15,11 +15,29 @@ class MainActivity : AppCompatActivity() {
         tripButton.setOnClickListener{
             tripAction()
         }
+        val logButton = findViewById<Button>(R.id.logButton)
+        logButton.setOnClickListener{
+            logAction()
+        }
+        val achievementButton = findViewById<Button>(R.id.achievementsButton)
+        achievementButton.setOnClickListener{
+            achievementAction()
+        }
 
     }
     //Intent
     private fun tripAction(){
         val intent = Intent(this, TripActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun logAction(){
+        val intent = Intent(this, LogActivity::class.java)
+        startActivity(intent)
+    }
+
+    private fun achievementAction(){
+        val intent = Intent(this, AchievementActivity::class.java)
         startActivity(intent)
     }
 }
