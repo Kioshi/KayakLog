@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.content.ContextCompat
 import android.util.Log
+import android.widget.TextView
 
 class TripActivity : AppCompatActivity() {
 
@@ -25,9 +26,12 @@ class TripActivity : AppCompatActivity() {
                 // Called when a new location is found by the network location provider.
                 // makeUseOfNewLocation(location)
             val loc = location.toString()
+                val GPSText : TextView = findViewById(R.id.GPSText) as TextView
+
+                GPSText.text = loc
 
                 // Print Location
-                Log.e("Location", loc)
+                //Log.e("Location", loc)
 
             }
 
