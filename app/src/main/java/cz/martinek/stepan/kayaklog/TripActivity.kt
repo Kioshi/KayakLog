@@ -1,6 +1,7 @@
 package cz.martinek.stepan.kayaklog
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
@@ -15,24 +16,26 @@ import android.widget.TextView
 class TripActivity : AppCompatActivity() {
 
 
+   @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
 
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+       val GPSText : TextView = findViewById(R.id.GPSText) as TextView
+
+
+       val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         val locationListener = object : LocationListener {
 
             override fun onLocationChanged(location: Location) {
                 // Called when a new location is found by the network location provider.
-                // makeUseOfNewLocation(location)
+
             val loc = location.toString()
                 val GPSText : TextView = findViewById(R.id.GPSText) as TextView
 
-                GPSText.text = loc
+                GPSText.append("\n " + loc)
 
-                // Print Location
-                //Log.e("Location", loc)
 
             }
 
@@ -40,30 +43,16 @@ class TripActivity : AppCompatActivity() {
             }
 
             override fun onProviderEnabled(provider: String) {
+                GPSText.append("\nProvider Enabled")
+
             }
 
             override fun onProviderDisabled(provider: String) {
+                GPSText.append("\nProvider Disabled")
             }
         }
+        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener)
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-            == PackageManager.PERMISSION_GRANTED) {
-
-            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener)
-        } else {
-            // Show rationale and request permission.
-        }
-
-
-
-// Register the listener with the Location Manager to receive location updates
-        if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.ACCESS_COARSE_LOCATION
-
-            ) != PackageManager.PERMISSION_GRANTED
-        ) {
-          // locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener)
         }
     }
-}
+
