@@ -4,6 +4,7 @@ import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,6 +24,14 @@ class MainActivity : AppCompatActivity() {
         achievementButton.setOnClickListener{
             achievementAction()
         }
+
+        //Getting data from Signup activity
+        val userName = intent.getStringExtra("userName")
+        findViewById<TextView>(R.id.userNameView).apply {
+            text = userName
+        }
+        val userPassword = intent.getStringExtra("userPassword")
+        val userEmail = intent.getStringExtra("userEmail")
 
     }
     //Intent
