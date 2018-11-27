@@ -53,35 +53,7 @@ class TripActivity : AppCompatActivity(), LocationListener {
         //val startbtn = findViewById<Button>(R.id.StartTripBtn)
 
         startButton.setOnClickListener {
-            /*
-                        val locationListener = object : LocationListener {
-
-                            override fun onLocationChanged(location: Location) {
-
-
-                                val x = location.latitude
-                                val y = location.longitude
-
-                                GPSText.setText("\nYour current location: (" + x + ":" + y + ")")
-
-
-                            }
-
-                            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-                            }
-
-                            override fun onProviderEnabled(provider: String) {
-                                //GPSText.setText("\nProvider Enabled")
-
-                                //GPSText.append("\nProvider Enabled")
-                            }
-
-                            override fun onProviderDisabled(provider: String) {
-                                //GPSText.setText("\nProvider Disabled")
-
-                                //GPSText.append("\nProvider Disabled")
-                            }
-                        }*/
+            
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
 
         }
