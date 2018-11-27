@@ -10,4 +10,6 @@
     <string name="nameTextInput">Username</string>
     <string name="passwordInput">Password</string>
     <string name="emailInput">Email</string>
+    <string name="title_activity_map">Map</string>
+    <string name="mapButton">LoadMap</string>
 </resources>

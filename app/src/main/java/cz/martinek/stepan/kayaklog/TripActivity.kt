@@ -2,6 +2,7 @@ package cz.martinek.stepan.kayaklog
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -13,11 +14,24 @@ import kotlinx.android.synthetic.main.activity_trip.*
 
 class TripActivity : AppCompatActivity(), LocationListener {
 
+
+
     override fun onLocationChanged(location: Location) {
 
 
         val x = location.latitude
         val y = location.longitude
+
+        val map = findViewById<Button>(R.id.mapButton)
+        map.setOnClickListener(){
+            val intent = Intent(this, MapActivity::class.java).apply {
+                putExtra("Lat", x.toString())
+                putExtra("Long", y.toString())
+            }
+            startActivity(intent)
+        }
+
+        //val myPlace = LatLng(x, y)
 
         GPSText.setText("\nYour current location: (" + x + ":" + y + ")")
 
@@ -45,19 +59,27 @@ class TripActivity : AppCompatActivity(), LocationListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
 
-        //val GPSText: TextView = findViewById(R.id.GPSText) as TextView
+
+
+
+
+
+    //val GPSText: TextView = findViewById(R.id.GPSText) as TextView
 
 
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         //val startbtn = findViewById<Button>(R.id.StartTripBtn)
 
+
         startButton.setOnClickListener {
-            
+
             locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
 
         }
     }
 }
+
+
 
 
