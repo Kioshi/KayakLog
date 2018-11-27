@@ -5,6 +5,12 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".TripActivity">
+        tools:context=".TripActivity" tools:layout_editor_absoluteY="81dp">
 
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/GPSText" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="136dp"
+            android:layout_marginStart="162dp" android:text="GPS data"/>
 </android.support.constraint.ConstraintLayout>

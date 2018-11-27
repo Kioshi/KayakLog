@@ -5,4 +5,9 @@
     <string name="StartTrip">StartTrip</string>
     <string name="log">Log</string>
     <string name="achievements">Achievements</string>
+    <string name="submitButton">Submit</string>
+    <string name="nameTextView">User name</string>
+    <string name="nameTextInput">Username</string>
+    <string name="passwordInput">Password</string>
+    <string name="emailInput">Email</string>
 </resources>
