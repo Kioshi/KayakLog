@@ -1,6 +1,7 @@
 package cz.martinek.stepan.kayaklog
 
 import android.annotation.SuppressLint
+import android.arch.persistence.room.Room
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
@@ -9,9 +10,16 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import cz.martinek.stepan.kayaklog.model.DbWorkerThread
+import cz.martinek.stepan.kayaklog.model.RoomDB
 import kotlinx.android.synthetic.main.activity_trip.*
 
 class TripActivity : AppCompatActivity(), LocationListener {
+
+    private var mDb: RoomDB? = null
+
+    private lateinit var mDbWorkerThread: DbWorkerThread
+
 
     override fun onLocationChanged(location: Location) {
 
@@ -45,6 +53,13 @@ class TripActivity : AppCompatActivity(), LocationListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
 
+        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
+
+        mDbWorkerThread.start()
+
+            mDb = RoomDB.getInstance(this)
+
+            GPSText.append("\nDB Working")
         //val GPSText: TextView = findViewById(R.id.GPSText) as TextView
 
 
