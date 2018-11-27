@@ -51,7 +51,7 @@ class TripActivity : AppCompatActivity() {
                 GPSText.append("\nProvider Disabled")
             }
         }
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0f, locationListener)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
 
         }
     }
