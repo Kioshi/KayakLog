@@ -1,58 +1,91 @@
 package cz.martinek.stepan.kayaklog
 
-import android.Manifest
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
-import android.util.Log
+import android.widget.Button
 import android.widget.TextView
+import kotlinx.android.synthetic.main.activity_trip.*
 
-class TripActivity : AppCompatActivity() {
+class TripActivity : AppCompatActivity(), LocationListener {
+
+    override fun onLocationChanged(location: Location) {
 
 
-   @SuppressLint("MissingPermission")
+        val x = location.latitude
+        val y = location.longitude
+
+        GPSText.setText("\nYour current location: (" + x + ":" + y + ")")
+
+
+    }
+
+    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
+    }
+
+    override fun onProviderEnabled(provider: String) {
+        //GPSText.setText("\nProvider Enabled")
+
+        GPSText.append("\nProvider Enabled")
+    }
+
+    override fun onProviderDisabled(provider: String) {
+        //GPSText.setText("\nProvider Disabled")
+
+        GPSText.append("\nProvider Disabled")
+    }
+
+
+    @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
 
-       val GPSText : TextView = findViewById(R.id.GPSText) as TextView
+        //val GPSText: TextView = findViewById(R.id.GPSText) as TextView
 
 
-       val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        val locationListener = object : LocationListener {
+        //val startbtn = findViewById<Button>(R.id.StartTripBtn)
 
-            override fun onLocationChanged(location: Location) {
-                // Called when a new location is found by the network location provider.
+        startButton.setOnClickListener {
+            /*
+                        val locationListener = object : LocationListener {
 
-            val loc = location.toString()
-                val GPSText : TextView = findViewById(R.id.GPSText) as TextView
-
-                GPSText.append("\n " + loc)
+                            override fun onLocationChanged(location: Location) {
 
 
-            }
+                                val x = location.latitude
+                                val y = location.longitude
 
-            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-            }
+                                GPSText.setText("\nYour current location: (" + x + ":" + y + ")")
 
-            override fun onProviderEnabled(provider: String) {
-                GPSText.append("\nProvider Enabled")
 
-            }
+                            }
 
-            override fun onProviderDisabled(provider: String) {
-                GPSText.append("\nProvider Disabled")
-            }
-        }
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, locationListener)
+                            override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
+                            }
+
+                            override fun onProviderEnabled(provider: String) {
+                                //GPSText.setText("\nProvider Enabled")
+
+                                //GPSText.append("\nProvider Enabled")
+                            }
+
+                            override fun onProviderDisabled(provider: String) {
+                                //GPSText.setText("\nProvider Disabled")
+
+                                //GPSText.append("\nProvider Disabled")
+                            }
+                        }*/
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
 
         }
     }
+}
+
 
