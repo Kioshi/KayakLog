@@ -1,18 +1,16 @@
 package cz.martinek.stepan.kayaklog
 
-import android.annotation.SuppressLint
 import android.arch.persistence.room.Room
-import android.content.Context
 import android.location.Location
 import android.location.LocationListener
-import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
-import cz.martinek.stepan.kayaklog.model.DbWorkerThread
-import cz.martinek.stepan.kayaklog.model.RoomDB
+import android.widget.Toast
+import cz.martinek.stepan.kayaklog.db.AppDatabase
 import kotlinx.android.synthetic.main.activity_trip.*
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import java.util.concurrent.CompletableFuture.runAsync
 
 class TripActivity : AppCompatActivity(), LocationListener {
 
@@ -51,16 +49,19 @@ class TripActivity : AppCompatActivity(), LocationListener {
     }
 
 
-    @SuppressLint("MissingPermission")
+    //@SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
 
-        val db = Room.databaseBuilder(
-                applicationContext,
-                RoomDB::class.java, "RoomDB"
-        )
-  db.build()
+        val context = this
+        doAsync {
+            val users = AppDatabase.getInstance(context).getUserData().getAll
+
+            uiThread {
+                Toast.makeText(context,"Yay!",Toast.LENGTH_LONG).show()
+            }
+        }
 
         //mDbWorkerThread = DbWorkerThread("dbWorkerThread")
 

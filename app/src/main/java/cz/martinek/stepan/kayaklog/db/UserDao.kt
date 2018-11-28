@@ -1,12 +1,12 @@
-package cz.martinek.stepan.kayaklog.model
+package cz.martinek.stepan.kayaklog.db
 
 import android.arch.persistence.room.*
 
 @Dao
-interface DAO {
+interface UserDao {
 
-    @Query("SELECT * FROM UserData")
-    fun getAll(): List<UserData>
+    @get:Query("SELECT * FROM UserData")
+    val getAll: List<UserData>
 
 
     /*

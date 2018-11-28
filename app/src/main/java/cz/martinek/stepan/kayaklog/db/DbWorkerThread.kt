@@ -1,4 +1,4 @@
-package cz.martinek.stepan.kayaklog.model
+package cz.martinek.stepan.kayaklog.db
 
 import android.os.Handler
 import android.os.HandlerThread
