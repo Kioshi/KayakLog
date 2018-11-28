@@ -7,27 +7,36 @@
         android:layout_height="match_parent"
         tools:context=".TripActivity" tools:layout_editor_absoluteY="81dp">
 
-    <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/GPSText"
-            android:text="GPS data"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginStart="142dp"
-            android:layout_marginBottom="14dp"/>
     <Button
-            android:text="Button"
+            android:text="@string/startButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/startButton"
-            app:layout_constraintBottom_toBottomOf="parent" android:layout_marginEnd="30dp"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            app:layout_constraintEnd_toStartOf="@+id/textView" android:layout_marginBottom="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="16dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="31dp"/>
     <Button
-            android:text="@string/mapButton"
+            android:text="@string/logTripButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/mapButton" app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:layout_marginTop="180dp"
-            app:layout_constraintEnd_toEndOf="parent"/>
+            android:id="@+id/logTrip" tools:text="@string/logTripButton"
+            app:layout_constraintStart_toEndOf="@+id/textView" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginBottom="16dp" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginEnd="16dp"/>
+    <com.google.android.gms.maps.MapView
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/mapView"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintBottom_toBottomOf="parent"/>
+    <TextView
+            android:text="TextView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:id="@+id/testMapView"
+            app:layout_constraintStart_toEndOf="@+id/startButton" app:layout_constraintEnd_toStartOf="@+id/logTrip"
+            app:layout_constraintTop_toTopOf="@+id/startButton"
+            app:layout_constraintBottom_toBottomOf="@+id/startButton" android:layout_marginEnd="32dp"
+    />
 </android.support.constraint.ConstraintLayout>

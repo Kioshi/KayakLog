@@ -12,4 +12,6 @@
     <string name="emailInput">Email</string>
     <string name="title_activity_map">Map</string>
     <string name="mapButton">LoadMap</string>
+    <string name="startButton">Start Trip</string>
+    <string name="logTripButton">Log Trip</string>
 </resources>
