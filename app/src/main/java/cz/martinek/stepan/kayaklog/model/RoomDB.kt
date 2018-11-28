@@ -1,10 +1,7 @@
 package cz.martinek.stepan.kayaklog.model
 
 import android.arch.persistence.room.Database
-import android.arch.persistence.room.Room
 import android.arch.persistence.room.RoomDatabase
-import android.content.Context
-
 
 
 @Database(entities = arrayOf(UserData::class), version = 1)
@@ -13,7 +10,7 @@ abstract class RoomDB : RoomDatabase() {
 
     abstract fun dao() : DAO
 
-
+/*
     companion object {
         private var INSTANCE: RoomDB? = null
 
@@ -31,5 +28,5 @@ abstract class RoomDB : RoomDatabase() {
             INSTANCE = null
         }
     }
-
+*/
 }

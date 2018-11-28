@@ -5,6 +5,11 @@ import android.arch.persistence.room.*
 @Dao
 interface DAO {
 
+    @Query("SELECT * FROM UserData")
+    fun getAll(): List<UserData>
+
+
+    /*
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertUserData(userdata: UserData)
 
@@ -19,5 +24,5 @@ interface DAO {
 
     @Query("SELECT * FROM UserData")
     fun getUserData(): List<UserData>
-
+*/
 }

@@ -16,9 +16,12 @@ import kotlinx.android.synthetic.main.activity_trip.*
 
 class TripActivity : AppCompatActivity(), LocationListener {
 
-    private var mDb: RoomDB? = null
 
-    private lateinit var mDbWorkerThread: DbWorkerThread
+
+
+    //private var mDb: RoomDB? = null
+
+    //private lateinit var mDbWorkerThread: DbWorkerThread
 
 
     override fun onLocationChanged(location: Location) {
@@ -53,25 +56,31 @@ class TripActivity : AppCompatActivity(), LocationListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
 
-        mDbWorkerThread = DbWorkerThread("dbWorkerThread")
+        val db = Room.databaseBuilder(
+                applicationContext,
+                RoomDB::class.java, "RoomDB"
+        )
+  db.build()
 
-        mDbWorkerThread.start()
+        //mDbWorkerThread = DbWorkerThread("dbWorkerThread")
 
-            mDb = RoomDB.getInstance(this)
+        //mDbWorkerThread.start()
+
+            //mDb = RoomDB.getInstance(this)
 
             GPSText.append("\nDB Working")
         //val GPSText: TextView = findViewById(R.id.GPSText) as TextView
 
 
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        //val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         //val startbtn = findViewById<Button>(R.id.StartTripBtn)
 
-        startButton.setOnClickListener {
+        //startButton.setOnClickListener {
 
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+            //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
 
-        }
+        //}
     }
 }
 
