@@ -10,26 +10,24 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.model.LatLng
+import com.google.android.gms.maps.model.Marker
+import com.google.android.gms.maps.model.MarkerOptions
 import kotlinx.android.synthetic.main.activity_trip.*
 
-class TripActivity : AppCompatActivity(), LocationListener {
+class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerClickListener {
 
 
+    private lateinit var map: GoogleMap
 
     override fun onLocationChanged(location: Location) {
 
 
         val x = location.latitude
         val y = location.longitude
-
-        val map = findViewById<Button>(R.id.mapButton)
-        map.setOnClickListener(){
-            val intent = Intent(this, MapActivity::class.java).apply {
-                putExtra("Lat", x.toString())
-                putExtra("Long", y.toString())
-            }
-            startActivity(intent)
-        }
 
         //val myPlace = LatLng(x, y)
 
@@ -59,8 +57,23 @@ class TripActivity : AppCompatActivity(), LocationListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
 
+        mapView.onCreate(savedInstanceState);
+        mapView.getMapAsync{
+            val x = 0.0//intent.getStringExtra("Lat").toDouble()
+            val y = 0.0//intent.getStringExtra("Long").toDouble()
 
+            map = it
 
+            //My current position
+            val ourPosition = LatLng(x,y.toDouble())
+
+            map.addMarker(MarkerOptions().position(ourPosition).title("Marker in Sydney"))
+            map.moveCamera(CameraUpdateFactory.newLatLng(ourPosition))
+
+            map.getUiSettings().setZoomControlsEnabled(true)
+            map.setOnMarkerClickListener(this)
+
+        }
 
 
 
@@ -78,6 +91,11 @@ class TripActivity : AppCompatActivity(), LocationListener {
 
         }
     }
+
+    override fun onMarkerClick(p0: Marker?): Boolean {
+        return false
+    }
+
 }
 
 
