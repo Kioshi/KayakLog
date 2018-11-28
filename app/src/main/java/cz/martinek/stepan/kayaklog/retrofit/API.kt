@@ -15,11 +15,17 @@ import retrofit2.http.FormUrlEncoded
 interface API
 {
     @FormUrlEncoded
-    @POST("oauth/token")
-    fun getAccessToken(
+    @POST("auth/token")
+    fun login(
             @Field("username") username: String,
             @Field("password") password: String,
             @Field("scope") scope: String,
+            @Field("grand_type") grandType: String) : Call<AuthToken>
+
+    @FormUrlEncoded
+    @POST("auth/token")
+    fun refreshAccess(
+            @Field("refresh_token") refresh_token: String,
             @Field("grand_type") grandType: String) : Call<AuthToken>
 
     @POST("register")
