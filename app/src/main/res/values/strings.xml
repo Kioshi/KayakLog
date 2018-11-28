@@ -11,4 +11,5 @@
     <string name="passwordInput">Password</string>
     <string name="emailInput">Email</string>
     <string name="auth_preference_file_key">AUTH_DATA_PREFERENCES</string>
+    <string name="offlineButtText">Offline mode</string>
 </resources>

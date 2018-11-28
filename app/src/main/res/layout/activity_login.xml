@@ -46,12 +46,21 @@
                 android:layout_marginTop="207dp" app:layout_constraintEnd_toEndOf="parent"
                 android:text="@string/LoginStringValue"/>
         <Button
-                android:text="@string/SignUpStringValue"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/SignUpButton"
-                app:layout_constraintStart_toStartOf="@+id/LoginButton" android:layout_marginTop="40dp"
-                app:layout_constraintTop_toBottomOf="@+id/LoginButton"/>
+            android:text="@string/SignUpStringValue"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/SignUpButton"
+            android:onClick="signUp"
+            app:layout_constraintStart_toStartOf="@+id/LoginButton" android:layout_marginTop="40dp"
+            app:layout_constraintTop_toBottomOf="@+id/LoginButton"/>
+        <Button
+            android:text="@string/offlineButtText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/offlineButt"
+            android:onClick="offline"
+            app:layout_constraintStart_toStartOf="@+id/SignUpButton" android:layout_marginTop="40dp"
+            app:layout_constraintTop_toBottomOf="@+id/SignUpButton"/>
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout

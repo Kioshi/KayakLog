@@ -20,13 +20,13 @@ interface API
             @Field("username") username: String,
             @Field("password") password: String,
             @Field("scope") scope: String,
-            @Field("grand_type") grandType: String) : Call<AuthToken>
+            @Field("grant_type") grandType: String) : Call<AuthToken>
 
     @FormUrlEncoded
     @POST("auth/token")
     fun refreshAccess(
             @Field("refresh_token") refresh_token: String,
-            @Field("grand_type") grandType: String) : Call<AuthToken>
+            @Field("grant_type") grandType: String) : Call<AuthToken>
 
     @POST("register")
     fun register(@Body newUser: NewUser): Call<Registered>

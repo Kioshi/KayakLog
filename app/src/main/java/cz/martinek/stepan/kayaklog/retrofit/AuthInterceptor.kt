@@ -7,7 +7,7 @@ import okhttp3.Response
 class AuthInterceptor : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
-        if (request.url().toString().contains("/register"))
+        if (request.url().toString().contains("/register") || request.url().toString().contains("/auth/token"))
         {
             val base = Base64.encodeToString((ServerInfo.CLIENT_ID+":"+ServerInfo.CLIENT_SECRET).toByteArray(),Base64.DEFAULT).trim()
             request = request.newBuilder()
@@ -16,9 +16,8 @@ class AuthInterceptor : Interceptor {
             return chain.proceed(request);
         }
 
-        val token: String = "0JB52bpN7OS0Q48h2EaNonkWdJchOMDI"
         request = request.newBuilder()
-                .addHeader("Authorization","Bearer "+token )
+                .addHeader("Authorization","Bearer "+ServerInfo.authData?.access_token ?: "")
                 .build()
         return chain.proceed(request)
     }

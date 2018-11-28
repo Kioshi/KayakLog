@@ -1,5 +1,6 @@
 package cz.martinek.stepan.kayaklog
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -19,9 +20,33 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        loading(false)
+
+        ServerInfo.loadAuthInfo(this)
+        userNameInput.setText(getPreferences(Context.MODE_PRIVATE).getString(Utils.USERNAME, ""))
+
+        val context = this
+        GlobalScope.launch(Dispatchers.Main) {
+            loading(true)
+            val successfull = async(Dispatchers.Default) {
+                return@async ServerInfo.relog(context)
+            }.await()
+            if (successfull) {
+                val intent = Intent(context, MainActivity::class.java)
+                intent.putExtra("userName", userNameInput.text.toString())
+                startActivity(intent)
+            } else {
+                loading(false)
+            }
+        }
     }
 
+    fun offline(view: View)
+    {
+        val intent = Intent(this, MainActivity::class.java)
+        intent.putExtra("userName", "OFFLINE")
+        startActivity(intent)
+
+    }
     fun signUp(view: View)
     {
         val intent = Intent(this, SignUpActivity::class.java)
@@ -58,6 +83,11 @@ class LoginActivity : AppCompatActivity() {
             {
                 val intent = Intent(context, MainActivity::class.java)
                 intent.putExtra("userName", userNameInput.text.toString())
+
+                val sharedPref = context.getPreferences(Context.MODE_PRIVATE)
+                val editor = sharedPref.edit()
+                editor.putString(Utils.USERNAME, userNameInput.text.toString())
+                editor.apply()
                 startActivity(intent)
             }
             else
