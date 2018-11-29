@@ -1,12 +1,14 @@
 package cz.martinek.stepan.kayaklog
 
-import android.arch.persistence.room.Room
+import android.arch.lifecycle.ViewModelProviders
 import android.location.Location
 import android.location.LocationListener
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import cz.martinek.stepan.kayaklog.db.AppDatabase
+import cz.martinek.stepan.kayaklog.db.UserDataRepository
+import cz.martinek.stepan.kayaklog.db.UserDataViewModel
 import kotlinx.android.synthetic.main.activity_trip.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -15,13 +17,7 @@ import java.util.concurrent.CompletableFuture.runAsync
 class TripActivity : AppCompatActivity(), LocationListener {
 
 
-
-
-    //private var mDb: RoomDB? = null
-
-    //private lateinit var mDbWorkerThread: DbWorkerThread
-
-
+    private lateinit var userDataViewModel: UserDataViewModel
     override fun onLocationChanged(location: Location) {
 
 
@@ -54,20 +50,27 @@ class TripActivity : AppCompatActivity(), LocationListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
 
+        userDataViewModel = ViewModelProviders.of(this).get(UserDataViewModel::class.java)
+    /*
+        userDataViewModel.allUserData.observe(this, Observer { words ->
+            // Update the cached copy of the words in the adapter.
+            words?.let { adapter.setWords(it) }
+        })
+*/
+
+        
+
+        // Logic on DB
         val context = this
         doAsync {
             val users = AppDatabase.getInstance(context).getUserData().getAll
+            GPSText.append("\nDB Working")
 
+            // Db work with UI
             uiThread {
                 Toast.makeText(context,"Yay!",Toast.LENGTH_LONG).show()
             }
         }
-
-        //mDbWorkerThread = DbWorkerThread("dbWorkerThread")
-
-        //mDbWorkerThread.start()
-
-            //mDb = RoomDB.getInstance(this)
 
             GPSText.append("\nDB Working")
         //val GPSText: TextView = findViewById(R.id.GPSText) as TextView

@@ -4,11 +4,17 @@ import android.arch.persistence.room.ColumnInfo
 import android.arch.persistence.room.Entity
 import android.arch.persistence.room.PrimaryKey
 
-@Entity
+@Entity(tableName = "userdata_table")
 data class UserData(
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey @ColumnInfo(name = "username") val username: String)
+
+   /*
+
     var uid: Int = 0,
 
-    @ColumnInfo(name = "first_name")
-    var firstName: String?
+    var trips: String?,
+
+    var archievements: String?
+
 )
+        */

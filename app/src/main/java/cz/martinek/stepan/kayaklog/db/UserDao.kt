@@ -1,18 +1,18 @@
 package cz.martinek.stepan.kayaklog.db
 
+import android.arch.lifecycle.LiveData
 import android.arch.persistence.room.*
 
 @Dao
 interface UserDao {
 
-    @get:Query("SELECT * FROM UserData")
-    val getAll: List<UserData>
 
+    @Insert
+    fun insert(userdata: UserData)
 
-    /*
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insertUserData(userdata: UserData)
-
+    @Query("SELECT * FROM userdata_table")
+    fun getAllUserData(): LiveData<List<UserData>>
+/*
     @Update
     fun updateUserData(userdata: UserData)
 
@@ -24,5 +24,9 @@ interface UserDao {
 
     @Query("SELECT * FROM UserData")
     fun getUserData(): List<UserData>
+
+        @get:Query("SELECT * FROM UserData")
+    val getAll: List<UserData>
+
 */
 }
