@@ -27,7 +27,7 @@ class UserDataViewModel(application: Application) : AndroidViewModel(application
     val allUserData: LiveData<List<UserData>>
 
     init{
-        val userDao = AppDatabase.getInstance(application, scope).userDao()
+        val userDao = AppDatabase.getInstance(application).userDao()
         repository = UserDataRepository(userDao)
         allUserData = repository.allUserData
     }

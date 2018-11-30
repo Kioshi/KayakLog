@@ -1,16 +1,23 @@
 package cz.martinek.stepan.kayaklog
 
+import android.arch.lifecycle.Observer
+import android.arch.lifecycle.ViewModelProviders
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
+import cz.martinek.stepan.kayaklog.db.AppDatabase
+import cz.martinek.stepan.kayaklog.db.UserDataViewModel
 
 class MainActivity : AppCompatActivity() {
+    
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
 
         val tripButton = findViewById<Button>(R.id.startTripButton)
         tripButton.setOnClickListener{
@@ -29,6 +36,10 @@ class MainActivity : AppCompatActivity() {
         val userName = intent.getStringExtra("userName")
         findViewById<TextView>(R.id.userNameView).apply {
             text = userName
+            val users = AppDatabase.getInstance(context).userDao().getAllUserData()
+
+
+            text = users.value.toString()
         }
         val userPassword = intent.getStringExtra("userPassword")
         val userEmail = intent.getStringExtra("userEmail")

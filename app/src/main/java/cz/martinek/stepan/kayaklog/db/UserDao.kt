@@ -10,8 +10,12 @@ interface UserDao {
     @Insert
     fun insert(userdata: UserData)
 
+
+
     @Query("SELECT * FROM userdata_table")
     fun getAllUserData(): LiveData<List<UserData>>
+
+
 /*
     @Update
     fun updateUserData(userdata: UserData)

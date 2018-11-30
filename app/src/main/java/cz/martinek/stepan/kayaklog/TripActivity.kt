@@ -17,7 +17,7 @@ import java.util.concurrent.CompletableFuture.runAsync
 class TripActivity : AppCompatActivity(), LocationListener {
 
 
-    private lateinit var userDataViewModel: UserDataViewModel
+
     override fun onLocationChanged(location: Location) {
 
 
@@ -49,21 +49,21 @@ class TripActivity : AppCompatActivity(), LocationListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
-
+/*
         userDataViewModel = ViewModelProviders.of(this).get(UserDataViewModel::class.java)
-    /*
+
         userDataViewModel.allUserData.observe(this, Observer { words ->
             // Update the cached copy of the words in the adapter.
             words?.let { adapter.setWords(it) }
         })
 */
 
-        
+
 
         // Logic on DB
         val context = this
         doAsync {
-            val users = AppDatabase.getInstance(context).getUserData().getAll
+           // val users = AppDatabase.getInstance(context).getUserData().getAll
             GPSText.append("\nDB Working")
 
             // Db work with UI

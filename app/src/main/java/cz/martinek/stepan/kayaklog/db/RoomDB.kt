@@ -37,17 +37,18 @@ abstract class AppDatabase : RoomDatabase() {
          * @return The singleton instance of SampleDatabase.
          */
         @Synchronized
-        fun getInstance(context: Context, scope: CoroutineScope): AppDatabase {
+        fun getInstance(context: Context): AppDatabase {
             if (sInstance == null) {
 
                 sInstance = Room
                         .databaseBuilder(context.applicationContext, AppDatabase::class.java, "KayakDB")
                         .fallbackToDestructiveMigration()
-                    .addCallback(AppDatabaseCallback(scope))
+                    //.addCallback(AppDatabaseCallback(scope))
                         .build()
             }
             return sInstance!!
         }
+
 
     }
     private class AppDatabaseCallback(
