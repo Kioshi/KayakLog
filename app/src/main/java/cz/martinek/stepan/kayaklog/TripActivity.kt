@@ -19,46 +19,43 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_trip.*
 
 class TripActivity : AppCompatActivity(), LocationListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
     override fun onMarkerClick(p0: Marker?) = false
 
-
     private var x: Double = 0.0
     private var y: Double = 0.0
+
+
+    private lateinit var trip: ArrayList<LatLng>
 
     private lateinit var map: GoogleMap
     private lateinit var line: Polyline
 
-    @SuppressLint("MissingPermission")
-    override fun onMapReady(googleMap: GoogleMap) {
-
-    }
-
-    @SuppressLint("MissingPermission")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_trip)
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-        val startButton = findViewById<Button>(R.id.startButton)
-        startButton.setOnClickListener {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
-        }
-
-        mapView.onCreate(savedInstanceState)
-        mapView.getMapAsync {
-
-        }
-
+    //Used for user permission
+    companion object {
+        private const val LOCATION_PERMISSION_REQUESTED = 1
     }
 
     override fun onLocationChanged(location: Location) {
         x = location.latitude
         y = location.longitude
 
+        //Our current location
+        val ourCurrentPosition = LatLng(x, y)
+
+        trip = ArrayList<LatLng>()
+        trip.add(ourCurrentPosition)
+
+        onChange()
+
+        map.addMarker(MarkerOptions().position(ourCurrentPosition).title("Our current location"))
+        map.animateCamera(CameraUpdateFactory.newLatLngZoom(ourCurrentPosition, 18f))
+        //val text = findViewById<TextView>(R.id.testMapView)
+        //text.setText(x.toString() + y.toString())
 
     }
 
@@ -73,7 +70,63 @@ class TripActivity : AppCompatActivity(), LocationListener, OnMapReadyCallback, 
     override fun onProviderDisabled(provider: String?) {
 
     }
-}
+
+
+    @SuppressLint("MissingPermission")
+    override fun onMapReady(googleMap: GoogleMap) {
+        //map.isMyLocationEnabled = true
+        map = googleMap
+        map.getUiSettings().setZoomControlsEnabled(true)
+        map.setOnMarkerClickListener(this)
+        //Setting up the map
+        setUpMap()
+    }
+
+    private fun setUpMap() {
+        //Checking for permission
+        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
+                TripActivity.LOCATION_PERMISSION_REQUESTED
+            )
+            return
+        }
+        //val ourPosition = LatLng(x, y)
+        //map.addMarker(MarkerOptions().position(ourPosition).title("Our current location"))
+        //map.animateCamera(CameraUpdateFactory.newLatLngZoom(ourPosition, 18f))
+        map.getUiSettings().setZoomControlsEnabled(true)
+        map.setOnMarkerClickListener(this)
+
+        //Map type options
+        map.mapType = GoogleMap.MAP_TYPE_HYBRID
+
+    }
+
+    private fun onChange(){
+        if(trip.isNotEmpty()){
+            //Test of polyline
+            line = map.addPolyline(PolylineOptions().addAll(trip).width(5f).color(Color.RED))
+
+        }
+    }
+
+    @SuppressLint("MissingPermission")
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_trip)
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+        val startButton = findViewById<Button>(R.id.startButton)
+        startButton.setOnClickListener {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+            val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
+            mapFragment.getMapAsync(this)
+        }
+        }
+
+    }
+
+
+
 
 
 
