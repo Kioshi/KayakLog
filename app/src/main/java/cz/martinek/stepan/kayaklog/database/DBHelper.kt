@@ -12,17 +12,23 @@ class DBHelper (context: Context, name: String?,
         factory, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-        val CREATE_PRODUCTS_TABLE = ("CREATE TABLE " +
-                TABLE_PRODUCTS + "("
-                + COLUMN_ID + " INTEGER PRIMARY KEY," +
-                COLUMN_PRODUCTNAME
-                + " TEXT," + COLUMN_QUANTITY + " INTEGER" + ")")
-        db.execSQL(CREATE_PRODUCTS_TABLE)
+
+
+        val CREATE_USERS_TABLE = ("CREATE TABLE " +
+                TABLE_USERS + "("
+                + COLUMN_ID_USERS + " INTEGER PRIMARY KEY," +
+                COLUMN_USERNAME
+                + " TEXT" + ")")
+
+
+
+        db.execSQL(CREATE_USERS_TABLE)
+        //db.execSQL(CREATE_PRODUCTS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int,
                            newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_PRODUCTS)
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS)
         onCreate(db)
 
     }
@@ -33,47 +39,50 @@ class DBHelper (context: Context, name: String?,
 
         private val DATABASE_VERSION = 1
         private val DATABASE_NAME = "kayakDB.db"
-        val TABLE_PRODUCTS = "products"
 
-        val COLUMN_ID = "_id"
-        val COLUMN_PRODUCTNAME = "productname"
-        val COLUMN_QUANTITY = "quantity"
+
+
+        // User Table
+        val TABLE_USERS = "users"
+        val COLUMN_ID_USERS = "_id"
+        val COLUMN_USERNAME = "username"
+
     }
 
-    fun addProduct(product: Product){
+    fun addUser(user: User){
 
         val values = ContentValues()
-        values.put(COLUMN_PRODUCTNAME, product.productName)
-        values.put(COLUMN_QUANTITY, product.quantity)
+        values.put(COLUMN_USERNAME, user.username)
 
         val db = this.writableDatabase
 
-        db.insert(TABLE_PRODUCTS, null, values)
+        db.insert(TABLE_USERS, null, values)
         db.close()
     }
 
-    fun findProduct(productname: String): Product?{
+    fun findUser(username: String): User?{
         val query =
-                "SELECT * FROM $TABLE_PRODUCTS WHERE $COLUMN_PRODUCTNAME = \"$productname\""
+            "SELECT * FROM $TABLE_USERS WHERE $COLUMN_USERNAME = \"$username\""
 
         val db = this.writableDatabase
 
         val cursor = db.rawQuery(query, null)
 
-        var product: Product? = null
+        var user: User? = null
 
         if(cursor.moveToFirst()){
-                cursor.moveToFirst()
-                val id = Integer.parseInt(cursor.getString(0))
-                val name = cursor.getString(1)
-                val quantity = Integer.parseInt(cursor.getString(2))
-                product = Product(id, name, quantity)
-                cursor.close()
+            cursor.moveToFirst()
+            val id = Integer.parseInt(cursor.getString(0))
+            val username = cursor.getString(1)
+            user = User(id, username)
+            cursor.close()
 
-            }
-            db.close()
-        return product
+        }
+        db.close()
+        return user
     }
+
+
 
 
 }

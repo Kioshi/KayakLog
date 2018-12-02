@@ -6,9 +6,6 @@ import android.location.LocationListener
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import cz.martinek.stepan.kayaklog.db.AppDatabase
-import cz.martinek.stepan.kayaklog.db.UserDataRepository
-import cz.martinek.stepan.kayaklog.db.UserDataViewModel
 import kotlinx.android.synthetic.main.activity_trip.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread

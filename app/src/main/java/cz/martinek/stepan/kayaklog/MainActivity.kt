@@ -3,13 +3,10 @@ package cz.martinek.stepan.kayaklog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.view.View
 import android.widget.Button
 import android.widget.TextView
-import cz.martinek.stepan.kayaklog.R.id.text
 import cz.martinek.stepan.kayaklog.database.DBHelper
-import cz.martinek.stepan.kayaklog.database.Product
-import cz.martinek.stepan.kayaklog.db.AppDatabase
+import cz.martinek.stepan.kayaklog.database.User
 
 class MainActivity : AppCompatActivity() {
     
@@ -18,7 +15,9 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        newProduct()
+        //newProduct("snes")
+        newUser("leon")
+
 
         val dbHandler = DBHelper(this, null, null, 1)
 
@@ -27,7 +26,7 @@ class MainActivity : AppCompatActivity() {
         //val product = dbHandler.findProduct("Playstation")
 
         findViewById<TextView>(R.id.userNameView).apply {
-            text = dbHandler.findProduct("Playstation")!!.productName.toString()
+            text = dbHandler.findUser("leon")!!.username.toString()
         }
 
 
@@ -62,39 +61,29 @@ class MainActivity : AppCompatActivity() {
 */
     }
 
-
-    fun newProduct(){
+    fun newUser(user: String){
 
         val dbHandler = DBHelper(this, null, null, 1)
-/*
-        val quantity = Integer.parseInt(productQuantity.text.toString())
-
-        val product = Product(productName.text.toString(), quantity)
-*/
-
-        val quantity = 1
-
-        val product = Product("Playstation", quantity)
-
-        dbHandler.addProduct(product)
-        //productName.setText("")
 
 
+        val user = User(user)
+
+        dbHandler.addUser(user)
     }
 
-
-    fun lookupProduct(){
+    fun lookupUser(){
         val dbHandler = DBHelper(this, null, null, 1)
 
 
 
-        val product = dbHandler.findProduct("Playstation")
+        val user = dbHandler.findUser("peter")
 
-        if(product != null){
+        if(user != null){
 
         }
-
     }
+
+
 
 
 
