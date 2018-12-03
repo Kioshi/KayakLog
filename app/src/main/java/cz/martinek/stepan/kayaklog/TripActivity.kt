@@ -108,7 +108,6 @@ class TripActivity : AppCompatActivity(), LocationListener, OnMapReadyCallback, 
 
         //Map type options
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
-
         //line = map.addPolyline(PolylineOptions().addAll(trip).width(5f).color(Color.RED))
 
     }
