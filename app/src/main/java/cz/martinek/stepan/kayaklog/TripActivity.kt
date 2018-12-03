@@ -10,6 +10,7 @@ import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -21,109 +22,86 @@ import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import kotlinx.android.synthetic.main.activity_map.*
 import kotlinx.android.synthetic.main.activity_trip.*
 
-class TripActivity : AppCompatActivity(), LocationListener, OnMapReadyCallback, GoogleMap.OnMarkerClickListener {
-    override fun onMarkerClick(p0: Marker?) = false
+class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerClickListener {
 
-    private var x: Double = 0.0
-    private var y: Double = 0.0
+    private var lat: Double = 0.0
+    private var long: Double = 0.0
 
+    private var trip: ArrayList<LatLng> = ArrayList()
 
-    private lateinit var trip: ArrayList<LatLng>
-
-    private lateinit var map: GoogleMap
-    private lateinit var line: Polyline
+    private var map: GoogleMap? = null
+    private var line: Polyline? = null
 
     //Used for user permission
     companion object {
         private const val LOCATION_PERMISSION_REQUESTED = 1
     }
 
-    override fun onLocationChanged(location: Location) {
-        //x = location.latitude
-        //y = location.longitude
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_trip)
+        // request map and set it up asynchronously
+        (mapFragment as SupportMapFragment).getMapAsync{
+            map = it
+            setUpMap(map!!)
+        }
+    }
 
+    fun startButtonClick(view: View)
+    {
+        //Checking for permission
+        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),TripActivity.LOCATION_PERMISSION_REQUESTED)
+            return
+        }
+        
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+    }
+
+    // LocationListener call backs
+    override fun onLocationChanged(location: Location) {
         //Our current location
         val ourCurrentPosition = LatLng(location.latitude, location.longitude)
 
         onChange(ourCurrentPosition)
 
-        map.addMarker(MarkerOptions().position(ourCurrentPosition).title("Our current location"))
-        map.animateCamera(CameraUpdateFactory.newLatLngZoom(ourCurrentPosition, 18f))
-
-
+        map?.addMarker(MarkerOptions().position(ourCurrentPosition).title("Our current location"))
+        map?.animateCamera(CameraUpdateFactory.newLatLngZoom(ourCurrentPosition, 18f))
     }
 
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+    override fun onProviderEnabled(provider: String?) {}
+    override fun onProviderDisabled(provider: String?) {}
+
+    // Google map callbacks
+    override fun onMarkerClick(marker: Marker?) = false
+
+
+    // Custom functions
     private fun onChange(latLng: LatLng){
-        val x = latLng.latitude
-        val y = latLng.longitude
+        lat = latLng.latitude
+        long = latLng.longitude
+        trip.add(latLng)
 
-        trip = ArrayList<LatLng>()
-        trip.add(LatLng(x, y))
-
-        val text = findViewById<TextView>(R.id.testTrip)
-        text.setText(trip.size.toString())
-
-
+        testTrip.setText(trip.size.toString())
     }
 
-    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-
-    }
-
-    override fun onProviderEnabled(provider: String?) {
-
-    }
-
-    override fun onProviderDisabled(provider: String?) {
-
-    }
-
-
-
-    @SuppressLint("MissingPermission")
-    override fun onMapReady(googleMap: GoogleMap) {
-        //map.isMyLocationEnabled = true
-        map = googleMap
+    private fun setUpMap(map: GoogleMap) {
         map.getUiSettings().setZoomControlsEnabled(true)
         map.setOnMarkerClickListener(this)
-        //Setting up the map
-        setUpMap()
-    }
+        map.mapType = GoogleMap.MAP_TYPE_HYBRID
 
-    private fun setUpMap() {
-        //Checking for permission
-        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),
-                TripActivity.LOCATION_PERMISSION_REQUESTED
-            )
-            return
-        }
-        //val ourPosition = LatLng(x, y)
+        //val ourPosition = LatLng(lat, long)
         //map.addMarker(MarkerOptions().position(ourPosition).title("Our current location"))
         //map.animateCamera(CameraUpdateFactory.newLatLngZoom(ourPosition, 18f))
-        map.getUiSettings().setZoomControlsEnabled(true)
-        map.setOnMarkerClickListener(this)
 
         //Map type options
-        map.mapType = GoogleMap.MAP_TYPE_HYBRID
         //line = map.addPolyline(PolylineOptions().addAll(trip).width(5f).color(Color.RED))
-
     }
 
-    @SuppressLint("MissingPermission")
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_trip)
-        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
-        val startButton = findViewById<Button>(R.id.startButton)
-        startButton.setOnClickListener {
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
-            val mapFragment = supportFragmentManager.findFragmentById(R.id.map) as SupportMapFragment
-            mapFragment.getMapAsync(this)
-        }
-        }
-
-    }
+}
