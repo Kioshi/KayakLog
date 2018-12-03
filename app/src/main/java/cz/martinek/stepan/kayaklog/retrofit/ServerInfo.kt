@@ -2,7 +2,6 @@ package cz.martinek.stepan.kayaklog.retrofit
 
 import android.content.Context
 import android.util.Log
-import cz.martinek.stepan.kayaklog.LoginActivity
 import cz.martinek.stepan.kayaklog.R
 import retrofit2.Response
 import java.lang.Exception
@@ -13,8 +12,6 @@ object ServerInfo
     val CLIENT_ID: String = "dk.sdu.kl.android"
     val CLIENT_SECRET: String = "C3mThh9S0HNVm3hccxMKUdXLrgFBINnV"
     var authData: AuthToken? = null
-
-    lateinit var retrofitAPI: API
 
     private val ACCESS_TOKEN = "ACCESS_TOKEN"
     private val REFRESH_TOKEN = "REFRESH_TOKEN"
@@ -64,7 +61,7 @@ object ServerInfo
     private fun refresh(context: Context, refreshToken: String): Boolean
     {
         try {
-            val res = ServerInfo.retrofitAPI.refreshAccess(refreshToken, GRAND_TYPE_REFRESH_TOKEN).execute()
+            val res = API.retrofitAPI.refreshAccess(refreshToken, GRAND_TYPE_REFRESH_TOKEN).execute()
 
             updateAuthorization(context, null)
             if (!res.isSuccessful || res.body() == null)
@@ -86,10 +83,10 @@ object ServerInfo
         try {
 
             if (username != null && password != null) {
-                res = ServerInfo.retrofitAPI.login(username, password, APP_SCOPES, GRAND_TYPE_PASSWORD).execute()
+                res = API.retrofitAPI.login(username, password, APP_SCOPES, GRAND_TYPE_PASSWORD).execute()
             }
             else if (authData != null){
-                res = ServerInfo.retrofitAPI.refreshAccess(authData!!.refresh_token, GRAND_TYPE_REFRESH_TOKEN).execute()
+                res = API.retrofitAPI.refreshAccess(authData!!.refresh_token, GRAND_TYPE_REFRESH_TOKEN).execute()
             }
             else{
                 return false

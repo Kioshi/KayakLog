@@ -1,60 +1,69 @@
 package cz.martinek.stepan.kayaklog.retrofit
 
+import android.content.Context
+import com.google.android.gms.tasks.Tasks.call
 import cz.martinek.stepan.kayaklog.model.Trip
 import cz.martinek.stepan.kayaklog.model.User
-import kotlinx.coroutines.Deferred
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.http.*
-import retrofit2.http.POST
-import retrofit2.http.FormUrlEncoded
+
+private enum class Requests{
+    GET_ME,
+    GET_USERS,
+    GET_USER_ID,
+    POST_USER,
+    DELETE_USER,
+    GET_TRIPS,
+    GET_TRIP,
+    POST_TRIP,
+    DELETE_TRIP
+}
 
 
-
-interface API
+object API
 {
-    @FormUrlEncoded
-    @POST("auth/token")
-    fun login(
-            @Field("username") username: String,
-            @Field("password") password: String,
-            @Field("scope") scope: String,
-            @Field("grant_type") grandType: String) : Call<AuthToken>
+    lateinit var retrofitAPI: RetrofitAPI
 
-    @FormUrlEncoded
-    @POST("auth/token")
-    fun refreshAccess(
-            @Field("refresh_token") refresh_token: String,
-            @Field("grant_type") grandType: String) : Call<AuthToken>
 
-    @POST("register")
-    fun register(@Body newUser: NewUser): Call<Registered>
+    private fun <T,A>call(context: Context, type: Requests, arg: A? = null, arg2: Trip? = null) : T?
+    {
+        val res: Response<T>
 
-    @GET("me")
-    fun getMe() : Call<User>
+        ServerInfo.relog(context)
+        when(type)
+        {
+            Requests.GET_ME -> res = retrofitAPI.getMe_().execute() as Response<T>
+            Requests.GET_USERS -> res = retrofitAPI.getUser_().execute() as Response<T>
+            Requests.GET_USER_ID -> res = retrofitAPI.getUser_(arg!! as Int) as Response<T>
+            Requests.POST_USER -> res = retrofitAPI.updateUser_(arg!! as User) as Response<T>
+            Requests.DELETE_USER -> res = retrofitAPI.deleteUser_(arg!! as Int) as Response<T>
+            Requests.GET_TRIPS -> res = retrofitAPI.getTrips_() as Response<T>
+            Requests.GET_TRIP -> res = retrofitAPI.getTrip_(arg!! as String) as Response<T>
+            Requests.POST_TRIP -> res = retrofitAPI.updateTrip_(arg!! as String, arg2!!) as Response<T>
+            Requests.DELETE_TRIP -> res = retrofitAPI.deleteTrip_(arg!! as String) as Response<T>
+        }
 
-    @GET("users")
-    fun getUser() : Call<User>
+        if (!res.isSuccessful)
+        {
+            when(res.code() / 100)
+            {
+                //Not supose to happen
+                3 -> throw RedirectException(res.code(), res.message())
+                4 -> throw UnauthenticatedException(res.code(), res.message())
+                5 -> throw  ServerErrorException(res.code(), res.message())
+                else -> throw ServerErrorException(res.code(), res.message())
+            }
+        }
 
-    @GET("users/{id}")
-    fun getUser(@Path("id") id : Int) : Call<User>
+        return res.body()
+    }
 
-    @POST("users")
-    fun updateUser(@Body user: User) : Call<Unit>
-
-    @DELETE("users/{id}")
-    fun deleteUser(@Path("id") id : Int): Call<Unit>
-
-    @GET("trips")
-    fun getTrips() : Call<List<Trip>>
-
-    @GET("trips/{guid}")
-    fun getTrip(@Path("guid") guid : String) : Call<Trip>
-
-    @POST("trips/{guid}")
-    fun updateTrip(@Path("guid") guid : String, @Body user: User) : Call<Unit>
-
-    @DELETE("trips/{guid}")
-    fun deleteTrip(@Path("guid") guid : String): Call<Unit>
+    fun getMe(context: Context) = call<User, Unit>(context, Requests.GET_ME);
+    fun getUser(context: Context) = call<User, Unit>(context, Requests.GET_USERS);
+    fun getUser(context: Context, id: Int) = call<User, Int>(context, Requests.GET_USER_ID, id);
+    fun updateUser(context: Context, user: User) = call<User, User>(context, Requests.POST_USER, user);
+    fun deleteUser(context: Context, id: Int) = call<Unit, Int>(context, Requests.DELETE_USER, id);
+    fun getTrips(context: Context) = call<List<Trip>, Unit>(context, Requests.GET_TRIPS);
+    fun getTrip(context: Context, guid: String) = call<Trip, String>(context, Requests.GET_TRIP, guid);
+    fun updateTrip(context: Context, guid: String, trip: Trip) = call<Unit, String>(context, Requests.POST_TRIP, guid, trip);
+    fun deleteTrip(context: Context, guid: String) = call<Unit, String>(context, Requests.DELETE_TRIP, guid);
 }

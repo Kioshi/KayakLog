@@ -25,9 +25,9 @@ class LoginActivity : AppCompatActivity() {
         userNameInput.setText(getPreferences(Context.MODE_PRIVATE).getString(Utils.USERNAME, ""))
 
         val context = this
-        GlobalScope.launch(Dispatchers.Main) {
+        ui.launch {
             loading(true)
-            val successfull = async(Dispatchers.Default) {
+            val successfull = bg.async {
                 return@async ServerInfo.relog(context)
             }.await()
             if (successfull) {
@@ -73,9 +73,9 @@ class LoginActivity : AppCompatActivity() {
         }
 
         val context = this
-        GlobalScope.launch(Dispatchers.Main) {
+        ui.launch {
             loading(true)
-            val successfull = async(Dispatchers.Default) {
+            val successfull = bg.async {
                 return@async ServerInfo.login(context, userNameInput.text.toString(), passwordInput.text.toString())
             }.await()
 

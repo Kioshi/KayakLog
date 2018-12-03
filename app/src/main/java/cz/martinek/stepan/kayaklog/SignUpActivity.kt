@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
+import cz.martinek.stepan.kayaklog.retrofit.API
 import cz.martinek.stepan.kayaklog.retrofit.NewUser
 import cz.martinek.stepan.kayaklog.retrofit.Registered
 import cz.martinek.stepan.kayaklog.retrofit.ServerInfo
@@ -49,12 +50,12 @@ class SignUpActivity : AppCompatActivity() {
 
         val context = this
         loading(true);
-        GlobalScope.launch(Dispatchers.Main) {
+        ui.launch(Dispatchers.Main) {
 
-            val job = async(Dispatchers.Default) {
+            val job = bg.async {
                 var response: Response<Registered>? = null
                 try {
-                    response = ServerInfo.retrofitAPI.register(NewUser(userNameInput.text.toString(), passwordInput.text.toString())).execute()
+                    response = API.retrofitAPI.register(NewUser(userNameInput.text.toString(), passwordInput.text.toString())).execute()
 
                 }catch (ex: Exception)
                 {

@@ -3,6 +3,7 @@ package cz.martinek.stepan.kayaklog
 import android.app.Application
 import com.google.gson.GsonBuilder
 import cz.martinek.stepan.kayaklog.retrofit.API
+import cz.martinek.stepan.kayaklog.retrofit.RetrofitAPI
 import cz.martinek.stepan.kayaklog.retrofit.AuthInterceptor
 import cz.martinek.stepan.kayaklog.retrofit.ServerInfo
 import okhttp3.OkHttpClient
@@ -29,12 +30,11 @@ class App : Application()
 
         httpClientBuilder.addInterceptor(AuthInterceptor())
 
-        // Initialize retrofit
-        ServerInfo.retrofitAPI = Retrofit.Builder()
+         API.retrofitAPI = Retrofit.Builder()
                 .baseUrl(ServerInfo.ADDRESS)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .callFactory(httpClientBuilder.build())
-                .build().create<API>(API::class.java)
+                .build().create<RetrofitAPI>(RetrofitAPI::class.java)
     }
 
 

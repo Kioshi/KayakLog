@@ -19,7 +19,7 @@ class TripActivity : AppCompatActivity(), LocationListener {
         val x = location.latitude
         val y = location.longitude
 
-        GPSText.setText("\nYour current location: (" + x + ":" + y + ")")
+        GPSText.text = "\nYour current location: ($x:$y)"
 
 
     }

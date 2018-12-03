@@ -3,8 +3,13 @@ package cz.martinek.stepan.kayaklog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
+import cz.martinek.stepan.kayaklog.model.User
+import cz.martinek.stepan.kayaklog.retrofit.*
+import kotlinx.coroutines.launch
+import java.lang.Exception
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,6 +42,22 @@ class MainActivity : AppCompatActivity() {
     //Intent
     private fun tripAction(){
 
+        val context = this
+        bg.launch {
+            try {
+                val me = API.getMe(context);
+                Log.d("Mememe", me.toString())
+            } catch (ex: UnauthenticatedException) {
+                Log.d("test", "1")
+            } catch (ex: ServerErrorException) {
+                Log.d("test", "2")
+            } catch (ex: RedirectException) {
+                Log.d("test", "3")
+            } catch (ex: Exception) {
+                Log.d("test", "4")
+            }
+        }
+        return;
         val intent = Intent(this, TripActivity::class.java)
         startActivity(intent)
     }
