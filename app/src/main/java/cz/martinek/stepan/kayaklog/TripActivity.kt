@@ -41,21 +41,30 @@ class TripActivity : AppCompatActivity(), LocationListener, OnMapReadyCallback, 
     }
 
     override fun onLocationChanged(location: Location) {
-        x = location.latitude
-        y = location.longitude
+        //x = location.latitude
+        //y = location.longitude
 
         //Our current location
-        val ourCurrentPosition = LatLng(x, y)
+        val ourCurrentPosition = LatLng(location.latitude, location.longitude)
 
-        trip = ArrayList<LatLng>()
-        trip.add(ourCurrentPosition)
-
-        onChange()
+        onChange(ourCurrentPosition)
 
         map.addMarker(MarkerOptions().position(ourCurrentPosition).title("Our current location"))
         map.animateCamera(CameraUpdateFactory.newLatLngZoom(ourCurrentPosition, 18f))
-        //val text = findViewById<TextView>(R.id.testMapView)
-        //text.setText(x.toString() + y.toString())
+
+
+    }
+
+    private fun onChange(latLng: LatLng){
+        val x = latLng.latitude
+        val y = latLng.longitude
+
+        trip = ArrayList<LatLng>()
+        trip.add(LatLng(x, y))
+
+        val text = findViewById<TextView>(R.id.testTrip)
+        text.setText(trip.size.toString())
+
 
     }
 
@@ -70,6 +79,7 @@ class TripActivity : AppCompatActivity(), LocationListener, OnMapReadyCallback, 
     override fun onProviderDisabled(provider: String?) {
 
     }
+
 
 
     @SuppressLint("MissingPermission")
@@ -99,14 +109,8 @@ class TripActivity : AppCompatActivity(), LocationListener, OnMapReadyCallback, 
         //Map type options
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
 
-    }
+        //line = map.addPolyline(PolylineOptions().addAll(trip).width(5f).color(Color.RED))
 
-    private fun onChange(){
-        if(trip.isNotEmpty()){
-            //Test of polyline
-            line = map.addPolyline(PolylineOptions().addAll(trip).width(5f).color(Color.RED))
-
-        }
     }
 
     @SuppressLint("MissingPermission")
@@ -124,10 +128,3 @@ class TripActivity : AppCompatActivity(), LocationListener, OnMapReadyCallback, 
         }
 
     }
-
-
-
-
-
-
-
