@@ -88,6 +88,7 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
         trip.add(latLng)
 
         testTrip.setText(trip.size.toString())
+        line = map?.addPolyline(PolylineOptions().addAll(trip).width(5f).color(Color.RED))
     }
 
     private fun setUpMap(map: GoogleMap) {
