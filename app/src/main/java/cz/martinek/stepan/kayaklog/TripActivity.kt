@@ -2,8 +2,10 @@ package cz.martinek.stepan.kayaklog
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
+import android.graphics.Path
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -24,13 +26,29 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_map.*
 import kotlinx.android.synthetic.main.activity_trip.*
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerClickListener {
 
+
+
+    //Trip name
+    //private val name: String = intent.getStringExtra("TripName")
+    //Trip description
+    //private val descripton: String = intent.getStringExtra("TripDescription")
+    //Public or private trip?
+    //private val public: Boolean = intent.getBooleanExtra("PublicTrip", false)
+    //Trip values
+    private var tripID: Int = 1
     private var lat: Double = 0.0
     private var long: Double = 0.0
 
-    private var trip: ArrayList<LatLng> = ArrayList()
+    private val duration = 1
+    private var timeCreated = ""
+
+    //Trip path
+    private var path: ArrayList<LatLng> = ArrayList()
 
     private var map: GoogleMap? = null
     private var line: Polyline? = null
@@ -50,6 +68,7 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
         }
     }
 
+    @SuppressLint("NewApi")
     fun startButtonClick(view: View)
     {
         //Checking for permission
@@ -60,6 +79,18 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
         
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+
+        //Getting current date and time
+        //val current = LocalDateTime.now()
+        //val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+        //timeCreated = current.format(formatter)
+        //testTrip.setText(timeCreated)
+
+    }
+
+    fun logButtonClick(view: View){
+        val intent = Intent(this, LogTripActivity::class.java)
+        startActivity(intent)
     }
 
     // LocationListener call backs
@@ -85,10 +116,10 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
     private fun onChange(latLng: LatLng){
         lat = latLng.latitude
         long = latLng.longitude
-        trip.add(latLng)
+        path.add(latLng)
 
-        testTrip.setText(trip.size.toString())
-        line = map?.addPolyline(PolylineOptions().addAll(trip).width(5f).color(Color.RED))
+        //testTrip.setText(path.toString())
+        line = map?.addPolyline(PolylineOptions().addAll(path).width(5f).color(Color.RED))
     }
 
     private fun setUpMap(map: GoogleMap) {
@@ -96,13 +127,5 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
         map.setOnMarkerClickListener(this)
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
 
-        //val ourPosition = LatLng(lat, long)
-        //map.addMarker(MarkerOptions().position(ourPosition).title("Our current location"))
-        //map.animateCamera(CameraUpdateFactory.newLatLngZoom(ourPosition, 18f))
-
-        //Map type options
-        //line = map.addPolyline(PolylineOptions().addAll(trip).width(5f).color(Color.RED))
     }
-
-
 }

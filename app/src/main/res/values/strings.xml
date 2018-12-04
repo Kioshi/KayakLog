@@ -16,4 +16,5 @@
     <string name="mapButton">LoadMap</string>
     <string name="startButton">Start Trip</string>
     <string name="logTripButton">Log Trip</string>
+    <string name="logTripSubmit">Submit</string>
 </resources>

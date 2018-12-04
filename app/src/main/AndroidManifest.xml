@@ -50,6 +50,8 @@
                 android:name=".MapActivity"
                 android:label="@string/title_activity_map">
         </activity>
+        <activity android:name=".LogTripActivity">
+        </activity>
     </application>
 
 </manifest>
