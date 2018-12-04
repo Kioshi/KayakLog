@@ -61,14 +61,16 @@ class MainActivity : AppCompatActivity() {
 */
     }
 
-    fun newUser(user: String){
+    fun newUser(username: String){
 
         val dbHandler = DBHelper(this, null, null, 1)
 
 
-        val user = User(user)
+        //val user = User(user)
 
-        dbHandler.addUser(user)
+
+
+        //dbHandler.addUser(user)
     }
 
     fun lookupUser(){
