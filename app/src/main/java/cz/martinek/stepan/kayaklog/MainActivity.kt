@@ -6,7 +6,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 import cz.martinek.stepan.kayaklog.database.DBHelper
+import cz.martinek.stepan.kayaklog.database.Trip
 import cz.martinek.stepan.kayaklog.database.User
+import cz.martinek.stepan.kayaklog.model.Path
+import java.util.*
 
 class MainActivity : AppCompatActivity() {
     
@@ -15,22 +18,40 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        //newProduct("snes")
-        newUser("leon")
 
+        //Trip name
+         val name: String = "tur til netto"
+        //Trip description
+         val description: String = ""
+        //Trip values
+         val lat = 0.0
+         val long = 0.0
+         val public = true
+         val duration = 1
+
+         val timeCreated = Date()
+
+        var p: Path? = null
+
+        p = Path(1.1,1.2)
+
+
+        //Trip path
+        var path: ArrayList<Path> = ArrayList()
+
+        path.add(p)
+
+        var trip: Trip? = null
+
+        trip = Trip(description, name, public, duration, timeCreated, path)
 
         val dbHandler = DBHelper(this, null, null, 1)
 
-
-
-        //val product = dbHandler.findProduct("Playstation")
+        dbHandler.addTrip(trip)
 
         findViewById<TextView>(R.id.userNameView).apply {
-            text = dbHandler.findUser("leon")!!.username.toString()
+            text = dbHandler.getTrip(1)
         }
-
-
-
 
 
         val tripButton = findViewById<Button>(R.id.startTripButton)
@@ -66,11 +87,11 @@ class MainActivity : AppCompatActivity() {
         val dbHandler = DBHelper(this, null, null, 1)
 
 
-        //val user = User(user)
+        val user = User(username)
 
 
 
-        //dbHandler.addUser(user)
+        dbHandler.addUser(user)
     }
 
     fun lookupUser(){

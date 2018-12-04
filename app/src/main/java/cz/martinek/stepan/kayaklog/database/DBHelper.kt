@@ -5,6 +5,9 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import cz.martinek.stepan.kayaklog.model.Path
+import java.lang.Boolean.FALSE
+import java.lang.Boolean.TRUE
 
 class DBHelper (context: Context, name: String?,
                 factory: SQLiteDatabase.CursorFactory?, version: Int) :
@@ -13,28 +16,32 @@ class DBHelper (context: Context, name: String?,
 
     override fun onCreate(db: SQLiteDatabase) {
 
-
         val CREATE_USERS_TABLE = ("CREATE TABLE " +
                 TABLE_USERS + "("
-                + COLUMN_ID_USERS + " INTEGER PRIMARY KEY," +
-                COLUMN_USERNAME
-                + " TEXT" + ")")
+                + COLUMN_ID_USERS + " INTEGER PRIMARY KEY,"
+                + COLUMN_USERNAME + " TEXT" + ")")
 
-        val CREATE_TRIPS_TABLE = ("CREATE TABLE " + TABLE_TRIPS + "("
-                + COLUMN_DESC + "TEXT,"
-                + COLUMN_NAME + "TEXT,"
-                + COLUMN_PUBLIC + "INTENGER,"
-                + COLUMN_DURATION + "INTENGER,"
-                + COLUMN_TIME_CREATED + "TEXT,"
-                + COLUMN_PATH + "TEXT" + ")")
+
+        val CREATE_TRIPS_TABLE = ("CREATE TABLE " +
+                TABLE_TRIPS + "("
+                + COLUMN_ID_TRIPS + " INTEGER PRIMARY KEY,"
+                + COLUMN_DESC + " TEXT,"
+                + COLUMN_NAME + " TEXT,"
+                + COLUMN_PUBLIC + " INTEGER,"
+                + COLUMN_DURATION + " INTEGER,"
+                + COLUMN_TIME_CREATED + " TEXT,"
+                + COLUMN_PATH + " TEXT" + ")")
+
 
         db.execSQL(CREATE_TRIPS_TABLE)
-        db.execSQL(CREATE_USERS_TABLE)
+       db.execSQL(CREATE_USERS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int,
                            newVersion: Int) {
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS)
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIPS)
         onCreate(db)
 
     }
@@ -45,7 +52,7 @@ class DBHelper (context: Context, name: String?,
 
         //General
         private val DATABASE_VERSION = 1
-        private val DATABASE_NAME = "kayakDB.db"
+        private val DATABASE_NAME = "kayakDB2.db"
 
 
 
@@ -53,12 +60,12 @@ class DBHelper (context: Context, name: String?,
         val TABLE_USERS = "users"
         val COLUMN_ID_USERS = "_id"
         val COLUMN_USERNAME = "username"
-        val COLUMN_TRIPS = "trips"
+        //val COLUMN_TRIPS = "trips"
 
 
         // Trip Table
-
         val TABLE_TRIPS = "trips"
+        val COLUMN_ID_TRIPS = "_id"
         val COLUMN_DESC = "desc"
         val COLUMN_NAME = "name"
         val COLUMN_PUBLIC = "public"
@@ -68,8 +75,22 @@ class DBHelper (context: Context, name: String?,
 
 
     }
-    fun addTrip(trip: Trip){
 
+    fun checkTable(): Int{
+
+
+        val db = this.writableDatabase
+
+        val cursor = db.rawQuery(
+            "select DISTINCT tbl_name from sqlite_master where tbl_name = '"
+    + TABLE_TRIPS + "'", null)
+
+        var count = cursor.count
+        return count
+    }
+
+
+    fun addTrip(trip: Trip){
         val values = ContentValues()
         values.put(COLUMN_DESC, trip.desc)
         values.put(COLUMN_NAME, trip.name)
@@ -77,16 +98,15 @@ class DBHelper (context: Context, name: String?,
         values.put(COLUMN_DURATION, trip.duration)
         values.put(COLUMN_TIME_CREATED, trip.timeCreated.toString())
 
-        var pathString = ""
+        val pathString = ""
 
-        var tempArray = trip.path
-
+        val tempArray = trip.path
 
         if (tempArray != null) {
             for (i in tempArray.indices) {
 
-            var lat = tempArray[i].lat
-            var long = tempArray[i].long
+            val lat = tempArray[i].lat
+            val long = tempArray[i].long
 
 
                 pathString.plus("lat" + lat + "long" + long + ":")
@@ -95,15 +115,11 @@ class DBHelper (context: Context, name: String?,
             values.put(COLUMN_PATH, pathString)
         }
 
-
-
-
         val db = this.writableDatabase
 
         db.insert(TABLE_TRIPS, null, values)
         db.close()
     }
-
 
 
     fun addUser(user: User){
@@ -116,6 +132,59 @@ class DBHelper (context: Context, name: String?,
         db.insert(TABLE_USERS, null, values)
         db.close()
     }
+
+
+    fun getTrip(id: Int): String{
+        var name = "sads"
+
+        val query =
+            "SELECT $COLUMN_NAME FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
+
+        val db = this.writableDatabase
+
+        val cursor = db.rawQuery(query, null)
+
+
+        if (cursor.moveToFirst()) {
+            name = cursor.getString(0)
+        }
+
+        var trip: Trip? = null
+
+        if(cursor.moveToFirst()){
+            cursor.moveToFirst()
+            val id = Integer.parseInt(cursor.getString(0))
+            val desc = cursor.getString(0)
+            name = cursor.getString(1)
+
+            val public: Boolean = TRUE
+
+            if(cursor.getInt(2) == 1){
+                val public: Boolean = TRUE
+            }else{
+                val public: Boolean = FALSE
+            }
+
+            val duration = cursor.getInt(3)
+            val timeCreated = cursor.getString(4)
+
+            val path: List<Path>
+
+
+/*
+            trip = Trip(desc, name, public, duration, timeCreated,
+                path)
+*/
+
+            cursor.close()
+        }
+
+        db.close()
+
+
+        return name
+    }
+
 
     fun findUser(username: String): User?{
         val query =
@@ -138,8 +207,4 @@ class DBHelper (context: Context, name: String?,
         db.close()
         return user
     }
-
-
-
-
 }

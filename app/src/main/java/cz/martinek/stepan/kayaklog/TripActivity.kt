@@ -1,6 +1,6 @@
 package cz.martinek.stepan.kayaklog
 
-import android.arch.lifecycle.ViewModelProviders
+
 import android.location.Location
 import android.location.LocationListener
 import android.support.v7.app.AppCompatActivity
@@ -9,7 +9,6 @@ import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_trip.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import java.util.concurrent.CompletableFuture.runAsync
 
 class TripActivity : AppCompatActivity(), LocationListener {
 
