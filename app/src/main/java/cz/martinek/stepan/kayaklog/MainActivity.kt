@@ -41,7 +41,7 @@ class MainActivity : AppCompatActivity() {
     }
     //Intent
     private fun tripAction(){
-
+        /*
         val context = this
         bg.launch {
             try {
@@ -58,6 +58,7 @@ class MainActivity : AppCompatActivity() {
             }
         }
         return;
+        */
         val intent = Intent(this, TripActivity::class.java)
         startActivity(intent)
     }
