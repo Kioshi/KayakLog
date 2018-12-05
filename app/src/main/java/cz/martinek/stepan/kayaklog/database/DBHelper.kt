@@ -8,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import cz.martinek.stepan.kayaklog.model.Path
 import java.lang.Boolean.FALSE
 import java.lang.Boolean.TRUE
+import java.util.*
 
 class DBHelper (context: Context, name: String?,
                 factory: SQLiteDatabase.CursorFactory?, version: Int) :
@@ -15,11 +16,10 @@ class DBHelper (context: Context, name: String?,
         factory, DATABASE_VERSION) {
 
     override fun onCreate(db: SQLiteDatabase) {
-/*
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIPS)
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEST)
-  */
+
 
         val CREATE_TEST_TABLE = ("CREATE TABLE " +
                 TABLE_USERS + "("
@@ -44,6 +44,7 @@ class DBHelper (context: Context, name: String?,
                 + COLUMN_TIME_CREATED + " TEXT,"
                 + COLUMN_PATH + " TEXT" + ")")
 
+        //deleteTrip(1)
         //db.execSQL(CREATE_TEST_TABLE)
         db.execSQL(CREATE_TRIPS_TABLE)
        // db.execSQL(CREATE_USERS_TABLE)
@@ -51,12 +52,11 @@ class DBHelper (context: Context, name: String?,
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int,
                            newVersion: Int) {
-        /*
+
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIPS)
-        db.execSQL("DROP TABLE IF EXISTS " + TABLE_TEST)
         onCreate(db)
-*/
+
     }
 
 
@@ -109,8 +109,8 @@ class DBHelper (context: Context, name: String?,
     fun addTrip(trip: Trip){
         val values = ContentValues()
         //values.put(COLUMN_ID_TRIPS, trip.id)
-        values.put(COLUMN_DESC, trip.desc)
         values.put(COLUMN_NAME, trip.name)
+        values.put(COLUMN_DESC, trip.desc)
         values.put(COLUMN_PUBLIC, trip.public)
         values.put(COLUMN_DURATION, trip.duration)
         values.put(COLUMN_TIME_CREATED, trip.timeCreated.toString())
@@ -151,20 +151,25 @@ class DBHelper (context: Context, name: String?,
     }
 
 
+    fun deleteTrip(id:Int){
+        this.writableDatabase.execSQL("DELETE * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\"")
+    }
+
+
     fun getTrip(id: Int): String{
-        var name: String = "sads"
+        var result: String = "empty"
 
         val query =
-            "SELECT $COLUMN_NAME FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
+            //"SELECT $COLUMN_NAME FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
         //"SELECT COUNT(*) FROM $TABLE_TRIPS"
         //"SELECT * FROM $TABLE_TRIPS"
-            //"SELECT * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
+            "SELECT * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
 
         val db = this.writableDatabase
 
         val cursor = db.rawQuery(query, null)
 
-
+/*
         if (cursor.moveToFirst()) {
             name = cursor.getString(0)
 
@@ -172,42 +177,64 @@ class DBHelper (context: Context, name: String?,
         }
         //name = cursor.count.toString()
 
-/*
+*/
 
         //var trip: Trip? = null
 
         if(cursor.moveToFirst()){
             cursor.moveToFirst()
-            val id = Integer.parseInt(cursor.getString(0))
+            val count = cursor.count
+
+            val name = cursor.getString(0)
+
             val desc = cursor.getString(1)
-            name = cursor.getString(2)
+
 
             val public: Boolean = TRUE
 
-            if(cursor.getInt(3) == 1){
+            if(cursor.getInt(2) == 1){
                 val public: Boolean = TRUE
             }else{
                 val public: Boolean = FALSE
             }
 
-            val duration = cursor.getInt(4)
-            val timeCreated = cursor.getString(5)
+            val duration = cursor.getInt(3)
+            //val timeCreated = cursor.getString(4)
 
-            val path: List<Path>
+            val timeCreated=  Date()
+
+            var p: Path? = null
+
+            p = Path(1.1,1.2)
 
 
-/*
-            trip = Trip(id, desc, name, public, duration, timeCreated,
+            //Trip path
+            var path: ArrayList<Path> = ArrayList()
+
+            path.add(p)
+
+            var trip: Trip? = null
+
+
+            //val path: List<Path>
+
+
+
+            trip = Trip(desc, name, public, duration, timeCreated,
                 path)
 
-*/
+
             cursor.close()
+
+            val tables = checkTable()
+
+            result = "Cursor size: " + count +" - name: " + trip.name.toString() + ", desc: " + trip.desc.toString() + ", public: " + trip.public.toString() +", duration: " + trip.duration.toString() + ", TOTAL TABLES: " + tables
         }
 
         db.close()
 
-        */
-        return name
+
+        return result
     }
 
 

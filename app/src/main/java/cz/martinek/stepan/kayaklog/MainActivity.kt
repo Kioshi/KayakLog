@@ -24,10 +24,10 @@ class MainActivity : AppCompatActivity() {
         //Trip name
          var name: String = "tur til netto"
         //Trip description
-         var description: String = ""
+         var description: String = "Jeg OKSFOÆEDF gik en tur til netto. Glemte kayaken"
         //Trip values
-         var lat: Double = 0.0
-         var long: Double = 0.0
+         var lat: Double = 55.0
+         var long: Double = 17.0
          var public: Boolean = true
          val duration = 1
 
@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
 
         var trip: Trip? = null
 
-        trip = Trip(description, name, public, duration, timeCreated, path)
+        trip = Trip(name, description, public, duration, timeCreated, path)
 
         val dbHandler = DBHelper(this, null, null, 1)
 

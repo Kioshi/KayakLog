@@ -14,7 +14,7 @@ class Trip {
     var timeCreated: Date? = null// "2018-11-26T12:14:15.000Z",
     var path: List<Path>? = null
 
-
+/*
     constructor(id: Int, desc: String, name: String, public: Boolean, duration: Int, timeCreated: Date, path: List<Path>) {
         this.id = id
         this.desc = desc
@@ -24,10 +24,10 @@ class Trip {
         this.timeCreated = timeCreated
         this.path = path
     }
-
+*/
     constructor(desc: String, name: String, public: Boolean, duration: Int, timeCreated: Date, path: List<Path>) {
-        this.desc = desc
         this.name = name
+        this.desc = desc
         this.public = public
         this.duration = duration
         this.timeCreated = timeCreated
