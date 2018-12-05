@@ -26,10 +26,11 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
 import kotlinx.android.synthetic.main.activity_map.*
 import kotlinx.android.synthetic.main.activity_trip.*
+import java.io.Serializable
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerClickListener {
+class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerClickListener, Serializable {
 
 
 
@@ -44,8 +45,7 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
     private var lat: Double = 0.0
     private var long: Double = 0.0
 
-    private val duration = 1
-    private var timeCreated = ""
+    private val duration = 10000
 
     //Trip path
     private var path: ArrayList<LatLng> = ArrayList()
@@ -89,7 +89,11 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
     }
 
     fun logButtonClick(view: View){
-        val intent = Intent(this, LogTripActivity::class.java)
+        val intent = Intent(this, LogTripActivity::class.java).apply {
+            putExtra("TripID", tripID)
+            putExtra("TripDuration", duration)
+            putExtra("TripPath", path)
+        }
         startActivity(intent)
     }
 
@@ -118,7 +122,7 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
         long = latLng.longitude
         path.add(latLng)
 
-        //testTrip.setText(path.toString())
+        testTrip.setText(path.toString())
         line = map?.addPolyline(PolylineOptions().addAll(path).width(5f).color(Color.RED))
     }
 
