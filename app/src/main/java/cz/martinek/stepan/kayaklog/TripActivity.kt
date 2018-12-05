@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.graphics.Path
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
@@ -13,17 +12,12 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.view.View
-import android.widget.Button
-import android.widget.TextView
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationCallback
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.*
+import cz.martinek.stepan.kayaklog.model.Path
 import kotlinx.android.synthetic.main.activity_map.*
 import kotlinx.android.synthetic.main.activity_trip.*
 import java.io.Serializable
@@ -32,21 +26,11 @@ import java.time.format.DateTimeFormatter
 
 class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerClickListener, Serializable {
 
-
-
-    //Trip name
-    //private val name: String = intent.getStringExtra("TripName")
-    //Trip description
-    //private val descripton: String = intent.getStringExtra("TripDescription")
-    //Public or private trip?
-    //private val public: Boolean = intent.getBooleanExtra("PublicTrip", false)
-    //Trip values
     private var tripID: Int = 1
     private var lat: Double = 0.0
     private var long: Double = 0.0
 
     private val duration = 10000
-
     //Trip path
     private var path: ArrayList<LatLng> = ArrayList()
 
@@ -120,6 +104,8 @@ class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerCl
     private fun onChange(latLng: LatLng){
         lat = latLng.latitude
         long = latLng.longitude
+
+        //var p = Path(lat, long)
         path.add(latLng)
 
         testTrip.setText(path.toString())
