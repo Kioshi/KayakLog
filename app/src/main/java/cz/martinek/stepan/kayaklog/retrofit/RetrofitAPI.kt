@@ -1,7 +1,7 @@
 package cz.martinek.stepan.kayaklog.retrofit
 
-import android.content.Context
-import cz.martinek.stepan.kayaklog.model.Trip
+
+import cz.martinek.stepan.kayaklog.database.Trip
 import cz.martinek.stepan.kayaklog.model.User
 import retrofit2.Call
 import retrofit2.Response

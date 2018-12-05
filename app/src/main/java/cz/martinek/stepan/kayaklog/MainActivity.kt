@@ -3,13 +3,9 @@ package cz.martinek.stepan.kayaklog
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Button
 import android.widget.TextView
-import cz.martinek.stepan.kayaklog.model.User
-import cz.martinek.stepan.kayaklog.retrofit.*
-import kotlinx.coroutines.launch
-import java.lang.Exception
+
 
 class MainActivity : AppCompatActivity() {
 
