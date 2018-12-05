@@ -9,6 +9,7 @@ import cz.martinek.stepan.kayaklog.database.DBHelper
 import cz.martinek.stepan.kayaklog.database.Trip
 import cz.martinek.stepan.kayaklog.database.User
 import cz.martinek.stepan.kayaklog.model.Path
+import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -19,17 +20,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
+        //var tripID: Int = 1
         //Trip name
-         val name: String = "tur til netto"
+         var name: String = "tur til netto"
         //Trip description
-         val description: String = ""
+         var description: String = ""
         //Trip values
-         val lat = 0.0
-         val long = 0.0
-         val public = true
+         var lat: Double = 0.0
+         var long: Double = 0.0
+         var public: Boolean = true
          val duration = 1
 
-         val timeCreated = Date()
+         val timeCreated: Date = Date()
 
         var p: Path? = null
 
@@ -47,11 +49,31 @@ class MainActivity : AppCompatActivity() {
 
         val dbHandler = DBHelper(this, null, null, 1)
 
+
+
+
+
+
         dbHandler.addTrip(trip)
 
+        //newUser("hitler")
+
+
+        //val dbHandler = DBHelper(this, null, null, 1)
+
+
+
+
         findViewById<TextView>(R.id.userNameView).apply {
+            //text = dbHandler.findUser("hitler")!!.username.toString()
+
             text = dbHandler.getTrip(1)
+
+            //text = dbHandler.checkTable().toString()
         }
+
+
+
 
 
         val tripButton = findViewById<Button>(R.id.startTripButton)
