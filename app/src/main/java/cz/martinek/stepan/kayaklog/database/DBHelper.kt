@@ -3,6 +3,7 @@ package cz.martinek.stepan.kayaklog.database
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import cz.martinek.stepan.kayaklog.model.Path
@@ -155,6 +156,17 @@ class DBHelper (context: Context, name: String?,
         this.writableDatabase.execSQL("DELETE * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\"")
     }
 
+
+    fun getListCursor(): Cursor {
+        val id = 1
+        
+        val db = this.writableDatabase
+        val query = "SELECT * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
+        val cursor = db.rawQuery(query, null)
+
+
+        return cursor
+    }
 
     fun getTrip(id: Int): String{
         var result: String = "empty"
