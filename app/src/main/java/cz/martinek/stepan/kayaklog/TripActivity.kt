@@ -1,87 +1,121 @@
 package cz.martinek.stepan.kayaklog
 
-
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationListener
+import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
+import android.support.v4.app.ActivityCompat
+import android.view.View
+import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.*
+import cz.martinek.stepan.kayaklog.model.Path
+import kotlinx.android.synthetic.main.activity_map.*
 import kotlinx.android.synthetic.main.activity_trip.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+import java.io.Serializable
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
-class TripActivity : AppCompatActivity(), LocationListener {
+class TripActivity : AppCompatActivity(), LocationListener, GoogleMap.OnMarkerClickListener, Serializable {
 
+    private var tripID: Int = 1
+    private var lat: Double = 0.0
+    private var long: Double = 0.0
 
+    private val duration = 10000
+    //Trip path
+    private var path: ArrayList<LatLng> = ArrayList()
 
-    override fun onLocationChanged(location: Location) {
+    private var map: GoogleMap? = null
+    private var line: Polyline? = null
 
-
-        val x = location.latitude
-        val y = location.longitude
-
-        GPSText.setText("\nYour current location: (" + x + ":" + y + ")")
-
-
+    //Used for user permission
+    companion object {
+        private const val LOCATION_PERMISSION_REQUESTED = 1
     }
 
-    override fun onStatusChanged(provider: String, status: Int, extras: Bundle) {
-    }
-
-    override fun onProviderEnabled(provider: String) {
-        //GPSText.setText("\nProvider Enabled")
-
-        GPSText.append("\nProvider Enabled")
-    }
-
-    override fun onProviderDisabled(provider: String) {
-        //GPSText.setText("\nProvider Disabled")
-
-        GPSText.append("\nProvider Disabled")
-    }
-
-
-    //@SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
-/*
-        userDataViewModel = ViewModelProviders.of(this).get(UserDataViewModel::class.java)
-
-        userDataViewModel.allUserData.observe(this, Observer { words ->
-            // Update the cached copy of the words in the adapter.
-            words?.let { adapter.setWords(it) }
-        })
-*/
-
-
-
-        // Logic on DB
-        val context = this
-        doAsync {
-           // val users = AppDatabase.getInstance(context).getUserData().getAll
-            GPSText.append("\nDB Working")
-
-            // Db work with UI
-            uiThread {
-                Toast.makeText(context,"Yay!",Toast.LENGTH_LONG).show()
-            }
+        // request map and set it up asynchronously
+        (mapFragment as SupportMapFragment).getMapAsync{
+            map = it
+            setUpMap(map!!)
         }
+    }
 
-            GPSText.append("\nDB Working")
-        //val GPSText: TextView = findViewById(R.id.GPSText) as TextView
+    @SuppressLint("NewApi")
+    fun startButtonClick(view: View)
+    {
+        //Checking for permission
+        if(ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION),TripActivity.LOCATION_PERMISSION_REQUESTED)
+            return
+        }
+        
+        val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+
+        //Getting current date and time
+        //val current = LocalDateTime.now()
+        //val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
+        //timeCreated = current.format(formatter)
+        //testTrip.setText(timeCreated)
+
+    }
+
+    fun logButtonClick(view: View){
+        val intent = Intent(this, LogTripActivity::class.java).apply {
+            putExtra("TripID", tripID)
+            putExtra("TripDuration", duration)
+            putExtra("TripPath", path)
+        }
+        startActivity(intent)
+    }
+
+    // LocationListener call backs
+    override fun onLocationChanged(location: Location) {
+        //Our current location
+        val ourCurrentPosition = LatLng(location.latitude, location.longitude)
+
+        onChange(ourCurrentPosition)
+
+        map?.addMarker(MarkerOptions().position(ourCurrentPosition).title("Our current location"))
+        map?.animateCamera(CameraUpdateFactory.newLatLngZoom(ourCurrentPosition, 18f))
+    }
+
+    override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
+    override fun onProviderEnabled(provider: String?) {}
+    override fun onProviderDisabled(provider: String?) {}
+
+    // Google map callbacks
+    override fun onMarkerClick(marker: Marker?) = false
 
 
-        //val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    // Custom functions
+    private fun onChange(latLng: LatLng){
+        lat = latLng.latitude
+        long = latLng.longitude
 
-        //val startbtn = findViewById<Button>(R.id.StartTripBtn)
+        //var p = Path(lat, long)
+        path.add(latLng)
 
-        //startButton.setOnClickListener {
+        testTrip.setText(path.toString())
+        line = map?.addPolyline(PolylineOptions().addAll(path).width(5f).color(Color.RED))
+    }
 
-            //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+    private fun setUpMap(map: GoogleMap) {
+        map.getUiSettings().setZoomControlsEnabled(true)
+        map.setOnMarkerClickListener(this)
+        map.mapType = GoogleMap.MAP_TYPE_HYBRID
 
-        //}
     }
 }
-
-
