@@ -14,19 +14,21 @@ class AchievementActivity : AppCompatActivity() {
         setContentView(R.layout.activity_achievement)
 
         val dbHandler = DBHelper(this, null,null,1)
-        val tripCursor = dbHandler.getListCursor()
+        val tripCursor = dbHandler.getTrip(1)
 
 
         val test = findViewById<TextView>(R.id.testAchievement)
-        var col = tripCursor.columnNames
+        test.setText(tripCursor.toString())
 
-        val t = col.joinToString{it}
+        //var col = tripCursor.columnNames
 
-        if(tripCursor.moveToFirst()) {
-            tripCursor.moveToFirst()
-            
-        }
+        //val t = col.joinToString{it}
+
+        //if(tripCursor.moveToFirst()) {
+        //    tripCursor.moveToFirst()
+
+        //}
         //test.setText(tripCursor.getColumnName(1).toString())
-        test.setText(t)
+        //test.setText(t)
     }
 }

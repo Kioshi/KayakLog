@@ -1,6 +1,5 @@
 package cz.martinek.stepan.kayaklog
 
-import android.database.sqlite.SQLiteDatabase
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.ListView
@@ -18,9 +17,5 @@ class LogActivity : AppCompatActivity() {
         val listView = findViewById<ListView>(R.id.tripListView)
         val tripAdapter = tripCursorAdapter(this, cursor)
         listView.adapter = tripAdapter
-
     }
-
-
-
 }

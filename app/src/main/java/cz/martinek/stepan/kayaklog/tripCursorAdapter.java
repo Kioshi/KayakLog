@@ -26,14 +26,18 @@ public class tripCursorAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         DBHelper dbHandler = new DBHelper(context, null,null,1);
+        Cursor tripCursor = dbHandler.getListCursor();
+
+        String name = tripCursor.getString(3);
         TextView tripName = (TextView) view.findViewById(R.id.tripName);
         //TextView tripDescription = (TextView) view.findViewById(R.id.tripDescription);
 
-        String name = cursor.getString(cursor.getColumnIndexOrThrow("name"));
+
+        //String name = tripCursor.getString(cursor.getColumnIndexOrThrow("name"));
         //String description = cursor.getString(cursor.getColumnIndexOrThrow("desc"));
 
         //Setting values from cursor to the text view
-        tripName.setText(dbHandler.getTrip(3));
+        tripName.setText(name);
         //tripDescription.setText(description);
 
 
