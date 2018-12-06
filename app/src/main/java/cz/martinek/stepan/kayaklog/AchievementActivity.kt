@@ -1,10 +1,9 @@
 package cz.martinek.stepan.kayaklog
 
-import android.support.v7.app.AppCompatActivity
+//import cz.martinek.stepan.kayaklog.database.DBHelper
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.widget.TextView
-import cz.martinek.stepan.kayaklog.database.DBHelper
-import org.w3c.dom.Text
 
 class AchievementActivity : AppCompatActivity() {
 
@@ -13,12 +12,12 @@ class AchievementActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_achievement)
 
-        val dbHandler = DBHelper(this, null,null,1)
-        val tripCursor = dbHandler.getTrip(1)
+        //val dbHandler = DBHelper(this, null,null,1)
+        //val tripCursor = dbHandler.getTrip(1)
 
 
         val test = findViewById<TextView>(R.id.testAchievement)
-        test.setText(tripCursor.toString())
+        //test.setText(tripCursor.toString())
 
         //var col = tripCursor.columnNames
 

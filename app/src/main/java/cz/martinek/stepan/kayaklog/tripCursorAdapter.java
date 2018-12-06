@@ -2,14 +2,11 @@ package cz.martinek.stepan.kayaklog;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextView;
-
-import cz.martinek.stepan.kayaklog.database.DBHelper;
 
 public class tripCursorAdapter extends CursorAdapter {
 
@@ -25,10 +22,10 @@ public class tripCursorAdapter extends CursorAdapter {
 
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
-        DBHelper dbHandler = new DBHelper(context, null,null,1);
-        Cursor tripCursor = dbHandler.getListCursor();
+        //DBHelper dbHandler = new DBHelper(context, null,null,1);
+        //Cursor tripCursor = dbHandler.getListCursor();
 
-        String name = tripCursor.getString(3);
+        //String name = tripCursor.getString(3);
         TextView tripName = (TextView) view.findViewById(R.id.tripName);
         //TextView tripDescription = (TextView) view.findViewById(R.id.tripDescription);
 
@@ -37,7 +34,7 @@ public class tripCursorAdapter extends CursorAdapter {
         //String description = cursor.getString(cursor.getColumnIndexOrThrow("desc"));
 
         //Setting values from cursor to the text view
-        tripName.setText(name);
+        //tripName.setText(name);
         //tripDescription.setText(description);
 
 

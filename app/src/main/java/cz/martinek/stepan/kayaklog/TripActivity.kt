@@ -1,5 +1,6 @@
 package cz.martinek.stepan.kayaklog
 
+//import cz.martinek.stepan.kayaklog.database.DBHelper
 import android.annotation.SuppressLint
 import android.content.Context
 import android.content.pm.PackageManager
@@ -20,9 +21,9 @@ import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
-import cz.martinek.stepan.kayaklog.database.DBHelper
-import cz.martinek.stepan.kayaklog.database.Trip
+import cz.martinek.stepan.kayaklog.model.AcquiredAchievement
 import cz.martinek.stepan.kayaklog.model.Path
+import cz.martinek.stepan.kayaklog.model.Trip
 import kotlinx.android.synthetic.main.activity_trip.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -88,7 +89,6 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
             }.show()
 
         }
-
     }
 
     fun start()
@@ -163,9 +163,16 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
 
     fun saveTrip(name: String, desc: String, public: Boolean)
     {
-        val trip = Trip(UUID.randomUUID().toString(), Calendar.getInstance().time, duration, path,public, desc, name)
-        val dbHandler = DBHelper(this, null,null,1)
-        dbHandler.addTrip(trip)
+        DB.realm.beginTransaction()
+        val trip = DB.realm.createObject(Trip::class.java, UUID.randomUUID().toString())
+        trip.name = name
+        trip.desc = desc
+        trip.public = public
+        trip.duration = duration
+        trip.timeCreated = Calendar.getInstance().time
+        trip.path!!.addAll(path.map { DB.realm.copyToRealm(it) })
+        Utils.user?.trips?.add(trip)
+        DB.realm.commitTransaction()
 
         Toast.makeText(this,"Trip was saved...", Toast.LENGTH_LONG).show()
     }
@@ -190,7 +197,12 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
             latLng = LatLng(lat / 5.0, lon/5.0)
         }
 
-        path.add(Path(path.size,latLng.latitude, latLng.longitude))
+        val p = Path()
+        p.pos = path.size
+        p.lat = latLng.latitude
+        p.long = latLng.longitude
+
+        path.add(p)
 
         if (path.size > 1)
         {
@@ -245,8 +257,6 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
     }
 
     fun rewardAchievement(id: Int) {
-        val dbHandler = DBHelper(this, null,null,1)
-        //TODO save achievement
         lateinit var name: String
         when(id)
         {
@@ -261,7 +271,15 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
             8 -> name = "Duration over 3h"
         }
 
-        Toast.makeText(this,"Congratulation! You were awarded new achievement '$name'.", Toast.LENGTH_LONG).show()
+        DB.realm.beginTransaction()
+        val achiev = DB.realm.createObject(AcquiredAchievement::class.java, UUID.randomUUID().toString())
+        achiev.achievementId = id
+        achiev.acquiredTime = Calendar.getInstance().time
+        achiev.extraInfo = name
+        Utils.user?.achievements?.add(achiev)
+        DB.realm.commitTransaction()
+
+        Toast.makeText(this,"Congratulation! You were awarded with new achievement '$name'.", Toast.LENGTH_LONG).show()
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
@@ -271,7 +289,6 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
     private fun setUpMap(map: GoogleMap) {
         map.uiSettings.setZoomControlsEnabled(true)
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
-
     }
 
     override fun onBackPressed() {

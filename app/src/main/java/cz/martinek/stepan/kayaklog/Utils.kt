@@ -1,6 +1,7 @@
 package cz.martinek.stepan.kayaklog
 
 import cz.martinek.stepan.kayaklog.model.User
+import io.realm.Realm
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 
@@ -13,4 +14,8 @@ object Utils {
 
     var user: User? = null
 
+}
+
+object DB{
+    val realm get() = Realm.getDefaultInstance()
 }

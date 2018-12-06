@@ -1,9 +1,9 @@
 package cz.martinek.stepan.kayaklog
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.widget.ListView
-import cz.martinek.stepan.kayaklog.database.DBHelper
+//import cz.martinek.stepan.kayaklog.database.DBHelper
 
 class LogActivity : AppCompatActivity() {
 
@@ -11,11 +11,11 @@ class LogActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log)
 
-        val dbHandler = DBHelper(this, null,null,1)
-        val cursor = dbHandler.getListCursor()
+        //val dbHandler = DBHelper(this, null,null,1)
+        //val cursor = dbHandler.getListCursor()
 
         val listView = findViewById<ListView>(R.id.tripListView)
-        val tripAdapter = tripCursorAdapter(this, cursor)
-        listView.adapter = tripAdapter
+        //val tripAdapter = tripCursorAdapter(this, cursor)
+        //listView.adapter = tripAdapter
     }
 }

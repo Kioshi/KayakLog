@@ -3,6 +3,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-kapt'
+apply plugin: 'realm-android'
 
 android {
     compileSdkVersion 28
@@ -41,4 +43,8 @@ dependencies {
 
     //ui
     implementation "org.jetbrains.anko:anko:0.10.8"
+
+    //realm
+    kapt 'dk.ilios:realmfieldnameshelper:1.1.1'
+    implementation 'io.realm:android-adapters:2.1.1'
 }

@@ -1,20 +1,19 @@
 package cz.martinek.stepan.kayaklog
 
+//import cz.martinek.stepan.kayaklog.database.DBHelper
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.TextView
 import com.google.android.gms.maps.model.LatLng
-import cz.martinek.stepan.kayaklog.database.DBHelper
-import cz.martinek.stepan.kayaklog.database.Trip
 import cz.martinek.stepan.kayaklog.model.Path
 import kotlinx.android.synthetic.main.activity_log_trip.*
 import java.util.*
 
 class LogTripActivity : AppCompatActivity() {
 
-    val dbHandler = DBHelper(this, null,null,1)
+    //val dbHandler = DBHelper(this, null,null,1)
 
     private var tripName: String = ""
     private var tripDescription: String = ""
@@ -55,8 +54,8 @@ class LogTripActivity : AppCompatActivity() {
             val lat = p.latitude
             val long = p.longitude
 
-            var newPath = Path(path.size, lat, long)
-            path.add(newPath)
+            //var newPath = Path(path.size, lat, long)
+            //path.add(newPath)
         }
     }
 
@@ -68,7 +67,7 @@ class LogTripActivity : AppCompatActivity() {
 
         tripDescription = "hej leon du er smukt"
         //Database call
-        dbHandler.addTrip(Trip("", date, 0,path))
+        //dbHandler.addTrip(Trip("", date, 0, path))
 
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)

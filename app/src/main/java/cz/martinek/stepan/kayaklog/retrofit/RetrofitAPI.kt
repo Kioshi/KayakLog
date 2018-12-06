@@ -1,14 +1,12 @@
 package cz.martinek.stepan.kayaklog.retrofit
 
 
-import cz.martinek.stepan.kayaklog.database.Trip
+import cz.martinek.stepan.kayaklog.model.Trip
 import cz.martinek.stepan.kayaklog.model.User
 import retrofit2.Call
-import retrofit2.Response
 import retrofit2.http.*
 import retrofit2.http.POST
 import retrofit2.http.FormUrlEncoded
-import java.lang.ref.ReferenceQueue
 
 interface RetrofitAPI
 {

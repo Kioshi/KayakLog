@@ -1,10 +1,13 @@
 package cz.martinek.stepan.kayaklog.model
 
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 import java.util.*
 
-data class AcquiredAchievement(
-    val guid:String,
-    val achievementId: Int,
-    val extraInfo: String,
-    val acquiredTime: Date//: "2018-11-26T12:14:15.000Z"
-)
+open class AcquiredAchievement() : RealmObject() {
+    @PrimaryKey
+    var guid: String? = null
+    var achievementId: Int? = null
+    var extraInfo: String = ""
+    var acquiredTime: Date? = null
+}

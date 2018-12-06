@@ -1,9 +1,13 @@
 package cz.martinek.stepan.kayaklog.model
 
-import cz.martinek.stepan.kayaklog.database.Trip
+import io.realm.RealmList
+import io.realm.RealmObject
+import io.realm.annotations.PrimaryKey
 
-data class User(
-        val id: Int,
-        var trips: List<Trip>,
-        var achievements: List<AcquiredAchievement>
-)
+open class User() : RealmObject() {
+
+    @PrimaryKey
+    var name: String? = null
+    var trips: RealmList<Trip>? = null
+    var achievements: RealmList<AcquiredAchievement>? = null
+}
