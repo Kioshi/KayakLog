@@ -36,7 +36,7 @@ class DBHelper (context: Context, name: String?,
                 + COLUMN_NAME + " TEXT" + ")")
 
         db.execSQL(CREATE_TRIPS_TABLE)
-       db.execSQL(CREATE_USERS_TABLE)
+        db.execSQL(CREATE_USERS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int,
@@ -144,8 +144,7 @@ class DBHelper (context: Context, name: String?,
         val db = this.writableDatabase
         val query = "SELECT * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
         val cursor = db.rawQuery(query, null)
-
-        db.close()
+        cursor.close()
         return cursor
     }
 

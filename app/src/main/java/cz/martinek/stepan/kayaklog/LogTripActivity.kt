@@ -64,7 +64,9 @@ class LogTripActivity : AppCompatActivity() {
     fun onClickSubmitLogTrip(view: View){
 
         tripName = findViewById<TextView>(R.id.logTripName).toString()
-        tripDescription = findViewById<TextView>(R.id.logTripDescription).toString()
+        //tripDescription = findViewById<TextView>(R.id.logTripDescription).toString()
+
+        tripDescription = "hej leon du er smukt"
         //Database call
         dbHandler.addTrip(Trip("", date, 0,path))
 
