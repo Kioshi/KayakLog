@@ -1,18 +1,15 @@
 package cz.martinek.stepan.kayaklog
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.view.View
-import android.widget.CompoundButton
-import android.widget.Switch
 import android.widget.TextView
 import com.google.android.gms.maps.model.LatLng
 import cz.martinek.stepan.kayaklog.database.DBHelper
 import cz.martinek.stepan.kayaklog.database.Trip
 import cz.martinek.stepan.kayaklog.model.Path
 import kotlinx.android.synthetic.main.activity_log_trip.*
-import org.w3c.dom.Text
 import java.util.*
 
 class LogTripActivity : AppCompatActivity() {
@@ -47,12 +44,7 @@ class LogTripActivity : AppCompatActivity() {
 
         //Is the trip public or private
         switchPublicTrip.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(isChecked) {
-                publicTrip = true
-
-            } else {
-                publicTrip = false
-            }
+            publicTrip = isChecked
         }
     }
 
@@ -63,7 +55,7 @@ class LogTripActivity : AppCompatActivity() {
             val lat = p.latitude
             val long = p.longitude
 
-            var newPath = Path(lat, long)
+            var newPath = Path(path.size, lat, long)
             path.add(newPath)
         }
     }
@@ -74,7 +66,7 @@ class LogTripActivity : AppCompatActivity() {
         tripName = findViewById<TextView>(R.id.logTripName).toString()
         tripDescription = findViewById<TextView>(R.id.logTripDescription).toString()
         //Database call
-        dbHandler.addTrip(Trip(tripDescription,tripName,publicTrip,test,date,path))
+        dbHandler.addTrip(Trip("", date, 0,path))
 
         val intent = Intent(this, MainActivity::class.java)
         startActivity(intent)

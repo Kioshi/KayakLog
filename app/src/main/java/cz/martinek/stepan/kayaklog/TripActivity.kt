@@ -2,7 +2,6 @@ package cz.martinek.stepan.kayaklog
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.Location
@@ -12,28 +11,27 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
 import android.view.View
+import android.widget.EditText
+import android.widget.Switch
+import android.widget.Toast
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.SupportMapFragment
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Polyline
 import com.google.android.gms.maps.model.PolylineOptions
+import cz.martinek.stepan.kayaklog.database.DBHelper
+import cz.martinek.stepan.kayaklog.database.Trip
 import cz.martinek.stepan.kayaklog.model.Path
 import kotlinx.android.synthetic.main.activity_trip.*
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import org.jetbrains.anko.alert
-import org.jetbrains.anko.noButton
-import org.jetbrains.anko.yesButton
+import org.jetbrains.anko.*
 import java.io.Serializable
 import java.util.*
 
 class TripActivity : AppCompatActivity(), LocationListener, Serializable {
-
-    private var tripID: Int = 1
-    private var lat: Double = 0.0
-    private var long: Double = 0.0
-
     //Trip path
     private var path: ArrayList<Path> = ArrayList()
 
@@ -45,15 +43,7 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
     private var speed: Float = 0.0f
     private var distance: Float = 0.0f
 
-    private var counter = ui.launch {
-        while(true) {
-            if (running) {
-                duration++;
-                durationTV.text = "Duration: $duration"
-            }
-            delay(1000)
-        }
-    }
+    private lateinit var counter: Job
 
 
     //Used for user permission
@@ -64,6 +54,17 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_trip)
+
+        counter = ui.launch {
+            while(true) {
+                if (running) {
+                    duration++;
+                    durationTV.text = "Duration: $duration"
+                }
+                delay(1000)
+            }
+        }
+
         // request map and set it up asynchronously
         (mapFragment as SupportMapFragment).getMapAsync{
             map = it
@@ -72,24 +73,21 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
     }
 
     @SuppressLint("NewApi")
-    fun startButtonClick(view: View)
+    fun startStopButtonClick(view: View)
     {
-        if (running) {
+        if (!running) {
             start()
         }
         else
         {
+            running = false
             alert("Are you sure you want to cancel current trip?") {
-                yesButton { cancel() }
-                noButton {}
+                positiveButton("Yes")  { cancel(); it.dismiss() }
+                negativeButton("No")  { running = true; it.dismiss() }
+                onCancelled { running = true }
             }.show()
 
         }
-        //Getting current date and time
-        //val current = LocalDateTime.now()
-        //val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.SSS")
-        //timeCreated = current.format(formatter)
-        //testTrip.setText(timeCreated)
 
     }
 
@@ -102,9 +100,10 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
         }
 
         val locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0f, this)
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1, 1f, this)
         running = true
         startStopButt.text = "Cancel"
+        saveTripButt.isEnabled = true
     }
 
     fun cancel()
@@ -117,31 +116,66 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
         distanceTV.text = "Distance: N/A"
         running = false
         duration = 0
+        speed = 0.0f
+        distance = 0.0f
+        path.clear()
+        line?.remove()
+        line = null
+        saveTripButt.isEnabled = false
 
         startStopButt.text = "Start"
     }
 
     fun save(view: View)
     {
-        val intent = Intent(this, LogTripActivity::class.java).apply {
-            putExtra("duration", duration)
-            putExtra("path", path)
-            //putExtra("achievements", achievements)
-        }
-        startActivity(intent)
+        running = false
+        checkAchievements()
+        alert("Are you sure you want to cancel current trip?") {
+            titleResource = R.string.saveTripTitle
+            lateinit var name: EditText
+            lateinit var desc: EditText
+            lateinit var public: Switch
+            customView{
+                verticalLayout {
+                    padding = dip(16)
+                        name  = editText {
+                        hintResource = R.string.nameOfTrip
+                        setText("Trip: ${Calendar.getInstance().time}")
+                    }
+                        desc  = editText {
+                        hintResource = R.string.descriptionOfTrip
+                    }
+                        public = switch{
+                        textResource = R.string.isTripPublic
+                    }
+
+                }
+            }
+            positiveButton("Save")  {
+                saveTrip(name.text.toString(), desc.text.toString(), public.isChecked)
+                cancel();
+                it.dismiss()
+            }
+            negativeButton("Continue")  { running = true; it.dismiss() }
+            onCancelled { running = true }
+        }.show()
     }
 
-    data class TempPath(
-     val time: Date,
-     val loc: Location
-    )
+    fun saveTrip(name: String, desc: String, public: Boolean)
+    {
+        val trip = Trip(UUID.randomUUID().toString(), Calendar.getInstance().time, duration, path,public, desc, name)
+        val dbHandler = DBHelper(this, null,null,1)
+        dbHandler.addTrip(trip)
 
-    var tempPath = ArrayList<TempPath>()
+        Toast.makeText(this,"Trip was saved...", Toast.LENGTH_LONG).show()
+    }
 
     // LocationListener call backs
     override fun onLocationChanged(location: Location)
     {
-        tempPath.add(TempPath(Calendar.getInstance().time, location))
+        if (!running)
+            return
+
         speed = location.speed
 
 
@@ -183,9 +217,51 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
         map?.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng, 18f))
 
         // Update textViews
-        speedTV.text = "Speed: $speed"
-        distanceTV.text = "Distance: $distance"
-        debugInfoTv.setText(path.toString())
+        speedTV.text = "Speed: %.2f".format(speed)
+        distanceTV.text = "Distance: %.2f".format(distance)
+
+        checkAchievements()
+    }
+
+    private fun checkAchievements() {
+
+        if (Utils.user == null)
+            return
+
+        Achievements.speed.forEach { s ->
+            if (speed > s.second && Utils.user?.achievements!!.none { it.achievementId == s.first })
+                rewardAchievement(s.first)
+        }
+
+        Achievements.distance.forEach { d ->
+            if (distance > d.second && Utils.user?.achievements!!.none { it.achievementId == d.first })
+                rewardAchievement(d.first)
+        }
+
+        Achievements.duration.forEach { d ->
+            if (duration > d.second && Utils.user?.achievements!!.none { it.achievementId == d.first })
+                rewardAchievement(d.first)
+        }
+    }
+
+    fun rewardAchievement(id: Int) {
+        val dbHandler = DBHelper(this, null,null,1)
+        //TODO save achievement
+        lateinit var name: String
+        when(id)
+        {
+            0 -> name = "Speed over 10m/s"
+            1 -> name = "Speed over 20m/s"
+            2 -> name = "Speed over 30m/s"
+            3 -> name = "Distance over 5km"
+            4 -> name = "Distance over 15km"
+            5 -> name = "Distance over 30km"
+            6 -> name = "Duration over 1h"
+            7 -> name = "Duration over 2h"
+            8 -> name = "Duration over 3h"
+        }
+
+        Toast.makeText(this,"Congratulation! You were awarded new achievement '$name'.", Toast.LENGTH_LONG).show()
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}
@@ -197,4 +273,11 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
         map.mapType = GoogleMap.MAP_TYPE_HYBRID
 
     }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+
+        cancel()
+    }
 }
+

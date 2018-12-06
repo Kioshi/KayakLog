@@ -17,4 +17,8 @@
     <string name="startButton">Start Trip</string>
     <string name="logTripButton">End Trip</string>
     <string name="logTripSubmit">Submit</string>
+    <string name="saveTripTitle">Save trip</string>
+    <string name="nameOfTrip">Trip name</string>
+    <string name="descriptionOfTrip">Description</string>
+    <string name="isTripPublic">Publicly available</string>
 </resources>
