@@ -48,7 +48,7 @@ class DBHelper (context: Context, name: String?,
         //deleteTrip(1)
         //db.execSQL(CREATE_TEST_TABLE)
         db.execSQL(CREATE_TRIPS_TABLE)
-       // db.execSQL(CREATE_USERS_TABLE)
+        db.execSQL(CREATE_USERS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int,
