@@ -21,34 +21,22 @@ class DBHelper (context: Context, name: String?,
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_USERS)
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_TRIPS)
 
-
-        val CREATE_TEST_TABLE = ("CREATE TABLE " +
-                TABLE_USERS + "("
-                + COLUMN_ID_USERS + " INTEGER PRIMARY KEY," +
-                COLUMN_NAME
-                + " TEXT," + COLUMN_DURATION + " INTEGER" + ")")
-
-
         val CREATE_USERS_TABLE = ("CREATE TABLE " +
                 TABLE_USERS + "("
                 + COLUMN_ID_USERS + " INTEGER PRIMARY KEY,"
                 + COLUMN_USERNAME + " TEXT" + ")")
 
-
         val CREATE_TRIPS_TABLE = ("CREATE TABLE " +
                 TABLE_TRIPS + "("
-                + COLUMN_ID_TRIPS + " INTEGER PRIMARY KEY,"
-                + COLUMN_DESC + " TEXT,"
-                + COLUMN_NAME + " TEXT,"
-                + COLUMN_PUBLIC + " INTEGER,"
-                + COLUMN_DURATION + " INTEGER,"
                 + COLUMN_TIME_CREATED + " TEXT,"
-                + COLUMN_PATH + " TEXT" + ")")
+                + COLUMN_DURATION + " INTEGER,"
+                + COLUMN_PATH + " TEXT,"
+                + COLUMN_PUBLIC + " INTEGER,"
+                + COLUMN_DESC + " TEXT,"
+                + COLUMN_NAME + " TEXT" + ")")
 
-        //deleteTrip(1)
-        //db.execSQL(CREATE_TEST_TABLE)
         db.execSQL(CREATE_TRIPS_TABLE)
-       // db.execSQL(CREATE_USERS_TABLE)
+       db.execSQL(CREATE_USERS_TABLE)
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int,
@@ -69,28 +57,21 @@ class DBHelper (context: Context, name: String?,
         private val DATABASE_NAME = "kayakDB2.db"
 
 
-
         // User Table
         val TABLE_USERS = "users"
         val COLUMN_ID_USERS = "_id"
         val COLUMN_USERNAME = "username"
-        //val COLUMN_TRIPS = "trips"
 
 
         // Trip Table
         val TABLE_TRIPS = "trips"
         val COLUMN_ID_TRIPS = "_id"
+        val COLUMN_TIME_CREATED = "timeCreated"
+        val COLUMN_DURATION = "duration"
+        val COLUMN_PATH = "path"
+        val COLUMN_PUBLIC = "public"
         val COLUMN_DESC = "desc"
         val COLUMN_NAME = "name"
-        val COLUMN_PUBLIC = "public"
-        val COLUMN_DURATION = "duration"
-        val COLUMN_TIME_CREATED = "timeCreated"
-        val COLUMN_PATH = "path"
-
-        // TestTable
-        val TABLE_TEST = "test"
-        val COLUMN_ID_TEST= "id"
-
     }
 
     fun checkTable(): Int{
@@ -109,7 +90,6 @@ class DBHelper (context: Context, name: String?,
 
     fun addTrip(trip: Trip){
         val values = ContentValues()
-        //values.put(COLUMN_ID_TRIPS, trip.id)
         values.put(COLUMN_NAME, trip.name)
         values.put(COLUMN_DESC, trip.desc)
         values.put(COLUMN_PUBLIC, trip.public)
@@ -123,8 +103,9 @@ class DBHelper (context: Context, name: String?,
         if (tempArray != null) {
             for (i in tempArray.indices) {
 
-            var lat = tempArray[i].lat
-            var long = tempArray[i].long
+
+            val lat = tempArray[i].lat
+            val long = tempArray[i].long
 
 
                 pathString.plus("lat" + lat + "long" + long + ":")
@@ -159,12 +140,12 @@ class DBHelper (context: Context, name: String?,
 
     fun getListCursor(): Cursor {
         val id = 1
-        
+
         val db = this.writableDatabase
         val query = "SELECT * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
         val cursor = db.rawQuery(query, null)
 
-
+        db.close()
         return cursor
     }
 
@@ -172,52 +153,41 @@ class DBHelper (context: Context, name: String?,
         var result: String = "empty"
 
         val query =
-            //"SELECT $COLUMN_NAME FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
-        //"SELECT COUNT(*) FROM $TABLE_TRIPS"
-        //"SELECT * FROM $TABLE_TRIPS"
             "SELECT * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
 
         val db = this.writableDatabase
 
         val cursor = db.rawQuery(query, null)
 
-/*
-        if (cursor.moveToFirst()) {
-            name = cursor.getString(0)
-
-           // name = cursor.count.toString()
-        }
-        //name = cursor.count.toString()
-
-*/
-
-        //var trip: Trip? = null
 
         if(cursor.moveToFirst()){
             cursor.moveToFirst()
             val count = cursor.count
 
-            val name = cursor.getString(0)
 
-            val desc = cursor.getString(1)
+            val guid = cursor.getString(0)
 
+            val duration = cursor.getInt(1)
+
+            val name = cursor.getString(3)
 
             val public: Boolean = TRUE
 
-            if(cursor.getInt(2) == 1){
+            if(cursor.getInt(4) == 1){
                 val public: Boolean = TRUE
             }else{
                 val public: Boolean = FALSE
             }
 
-            val duration = cursor.getInt(3)
+            val desc = cursor.getString(5)
+
             //val timeCreated = cursor.getString(4)
 
             val timeCreated=  Date()
 
             var p: Path? = null
 
-            p = Path(1.1,1.2)
+            p = Path(1,1.1,1.2)
 
 
             //Trip path
@@ -231,9 +201,7 @@ class DBHelper (context: Context, name: String?,
             //val path: List<Path>
 
 
-
-            trip = Trip(desc, name, public, duration, timeCreated,
-                path)
+            trip = Trip(guid, timeCreated, duration, path, public,desc,name)
 
 
             cursor.close()
@@ -244,7 +212,6 @@ class DBHelper (context: Context, name: String?,
         }
 
         db.close()
-
 
         return result
     }
