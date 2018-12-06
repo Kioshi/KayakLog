@@ -56,9 +56,7 @@ class LoginActivity : AppCompatActivity() {
                 Utils.user = DB.realm.copyToRealm(user!!)
                 DB.realm.commitTransaction()
 
-                val intent = Intent(context, MainActivity::class.java)
-                intent.putExtra("userName", username)
-                startActivity(intent)
+                finish()
             } else {
                 loading(false)
             }
@@ -75,9 +73,7 @@ class LoginActivity : AppCompatActivity() {
             DB.realm.commitTransaction()
         }
 
-        val intent = Intent(this, MainActivity::class.java)
-        intent.putExtra("userName", "OFFLINE")
-        startActivity(intent)
+        finish()
 
     }
     fun signUp(view: View)
@@ -141,14 +137,11 @@ class LoginActivity : AppCompatActivity() {
                     DB.realm.commitTransaction()
                 }
 
-                val intent = Intent(context, MainActivity::class.java)
-                intent.putExtra("userName", username)
-
                 val sharedPref = context.getPreferences(Context.MODE_PRIVATE)
                 val editor = sharedPref.edit()
                 editor.putString(Utils.USERNAME, userNameInput.text.toString())
                 editor.apply()
-                startActivity(intent)
+                finish()
             }
             else
             {
@@ -156,5 +149,9 @@ class LoginActivity : AppCompatActivity() {
                 loading(false)
             }
         }
+    }
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
     }
 }

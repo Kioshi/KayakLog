@@ -62,7 +62,25 @@ object API
     fun updateUser(context: Context, user: User) = call<User, User>(context, Requests.POST_USER, user);
     fun deleteUser(context: Context, id: Int) = call<Unit, Int>(context, Requests.DELETE_USER, id);
     fun getTrips(context: Context) = call<List<Trip>, Unit>(context, Requests.GET_TRIPS);
-    fun getTrip(context: Context, guid: String) = call<Trip, String>(context, Requests.GET_TRIP, guid);
+    fun getTrip(context: Context, guid: String): Trip?
+    {
+        val res =  API.retrofitAPI.getTrip_(guid).execute()
+
+        ServerInfo.relog(context)
+
+        if (res.isSuccessful)
+        {
+            when(res.code() / 100)
+            {
+                //Not supose to happen
+                3 -> throw RedirectException(res.code(), res.message())
+                4 -> throw UnauthenticatedException(res.code(), res.message())
+                5 -> throw  ServerErrorException(res.code(), res.message())
+                else -> throw ServerErrorException(res.code(), res.message())
+            }
+        }
+        return res.body();
+    }
     fun updateTrip(context: Context, guid: String, trip: Trip) = call<Unit, String>(context, Requests.POST_TRIP, guid, trip);
     fun deleteTrip(context: Context, guid: String) = call<Unit, String>(context, Requests.DELETE_TRIP, guid);
 }

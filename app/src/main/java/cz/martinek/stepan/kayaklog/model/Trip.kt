@@ -15,7 +15,7 @@ open class Trip() : RealmObject() {
     var timeCreated: Date? = null
     var duration: Int = 0
     var path: RealmList<Path>? = null
-    var public: Boolean = false
+    var publiclyAvailable: Boolean = false
     var desc: String = ""
 
     @Index

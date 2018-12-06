@@ -1,10 +1,10 @@
 package cz.martinek.stepan.kayaklog
 
 import android.content.Context
-import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.widget.Toast
@@ -13,9 +13,10 @@ import cz.martinek.stepan.kayaklog.retrofit.NewUser
 import cz.martinek.stepan.kayaklog.retrofit.Registered
 import cz.martinek.stepan.kayaklog.retrofit.ServerInfo
 import kotlinx.android.synthetic.main.activity_sign_up.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import retrofit2.Response
-import java.lang.Exception
 
 class SignUpActivity : AppCompatActivity() {
 
@@ -24,9 +25,6 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(R.layout.activity_sign_up)
 
         loading(false)
-        submitButton.setOnClickListener(){
-            signUpAction()
-        }
     }
     private fun loading(show: Boolean) {
         if (show) {
@@ -40,7 +38,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    private fun signUpAction(){
+    fun signUpAction(view: View){
 
         if (userNameInput.text.isEmpty() || passwordInput.text.isEmpty())
         {
@@ -90,10 +88,7 @@ class SignUpActivity : AppCompatActivity() {
             editor.putString(Utils.USERNAME, userNameInput.text.toString())
             editor.apply()
 
-            val intent = Intent(context, MainActivity::class.java).apply{
-                putExtra("userName", userNameInput.text.toString())
-            }
-            startActivity(intent)
+            finish()
         }
     }
 }

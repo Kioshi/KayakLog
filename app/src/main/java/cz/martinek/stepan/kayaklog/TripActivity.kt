@@ -167,13 +167,13 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
         val trip = DB.realm.createObject(Trip::class.java, UUID.randomUUID().toString())
         trip.name = name
         trip.desc = desc
-        trip.public = public
+        trip.publiclyAvailable = public
         trip.duration = duration
         trip.timeCreated = Calendar.getInstance().time
         trip.path!!.addAll(path.map { DB.realm.copyToRealm(it) })
         Utils.user?.trips?.add(trip)
         DB.realm.commitTransaction()
-
+        //TODO sync with server
         Toast.makeText(this,"Trip was saved...", Toast.LENGTH_LONG).show()
     }
 
@@ -278,6 +278,7 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
         achiev.extraInfo = name
         Utils.user?.achievements?.add(achiev)
         DB.realm.commitTransaction()
+        //TODO sync with server
 
         Toast.makeText(this,"Congratulation! You were awarded with new achievement '$name'.", Toast.LENGTH_LONG).show()
     }
@@ -292,9 +293,18 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
     }
 
     override fun onBackPressed() {
-        super.onBackPressed()
+        if (!running)
+        {
+            super.onBackPressed()
+            return
+        }
 
-        cancel()
+        running = false
+        alert("Are you sure you want to cancel current trip?") {
+            positiveButton("Yes")  { cancel(); it.dismiss(); super.onBackPressed() }
+            negativeButton("No")  { running = true; it.dismiss() }
+            onCancelled { running = true }
+        }.show()
     }
 }
 
