@@ -144,7 +144,7 @@ class DBHelper (context: Context, name: String?,
         val db = this.writableDatabase
         val query = "SELECT * FROM $TABLE_TRIPS WHERE $COLUMN_ID_TRIPS = \"$id\""
         val cursor = db.rawQuery(query, null)
-
+        cursor.close()
         db.close()
         return cursor
     }
