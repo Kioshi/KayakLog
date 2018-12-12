@@ -16,7 +16,7 @@ open class Trip() : RealmObject() {
     var duration: Int = 0
     var path: RealmList<Path>? = null
     var publiclyAvailable: Boolean = false
-    var desc: String = ""
+    var description: String = ""
 
     @Index
     var name: String = "Trip: ${timeCreated}"

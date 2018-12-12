@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import cz.martinek.stepan.kayaklog.model.User
@@ -39,24 +40,52 @@ class LoginActivity : AppCompatActivity() {
                 val pref = context.getPreferences(Context.MODE_PRIVATE)
                 val username = pref.getString(Utils.USERNAME, "");
 
-                val user = bg.async {
-                    val user = DB.realm.where<User>().equalTo(UserFields.NAME, username).findFirst()
-                    if (user != null)
+                var user = DB.realm.where<User>().equalTo(UserFields.USERNAME, username).findFirst()
+                val copy = if (user != null) DB.realm.copyFromRealm(user) else null
+                var user2 = bg.async {
+                    if (copy != null)
                     {
-                        return@async API.updateUser(context, DB.realm.copyFromRealm(user))
+                        try {
+                            return@async API.updateUser(context,copy)
+                        }
+                        catch (ex: Exception)
+                        {
+                            Log.d("Retrofit:UpdateUser",ex.message)
+                        }
                     }
                     else
                     {
-                        return@async API.getUser(context)
+                        try {
+                            return@async API.getUser(context)
+                        }
+                        catch (ex: Exception)
+                        {
+                            Log.d("Retrofit:GetUser",ex.message)
+                        }
                     }
+                    return@async null
                 }.await()
 
-                DB.realm.beginTransaction()
-                DB.realm.where<User>().equalTo(UserFields.NAME, username).findAll().deleteAllFromRealm()
-                Utils.user = DB.realm.copyToRealm(user!!)
-                DB.realm.commitTransaction()
 
-                finish()
+                if (user2 != null)
+                {
+                    DB.realm.beginTransaction()
+                    DB.realm.where<User>().equalTo(UserFields.USERNAME, username).findAll().deleteAllFromRealm()
+                    Utils.user = DB.realm.copyToRealmOrUpdate(user2)
+                    DB.realm.commitTransaction()
+                    finish()
+                    return@launch
+                }
+
+
+                if (user != null)
+                {
+                    Utils.user = user
+                    finish()
+                    return@launch
+                }
+                loading(false)
+
             } else {
                 loading(false)
             }
@@ -65,7 +94,7 @@ class LoginActivity : AppCompatActivity() {
 
     fun offline(view: View)
     {
-        Utils.user = DB.realm.where<User>().equalTo(UserFields.NAME, "OFFLINE").findFirst()
+        Utils.user = DB.realm.where<User>().equalTo(UserFields.USERNAME, "OFFLINE").findFirst()
         if (Utils.user == null)
         {
             DB.realm.beginTransaction()
@@ -112,7 +141,7 @@ class LoginActivity : AppCompatActivity() {
 
             if (successfull)
             {
-                Utils.user = DB.realm.where<User>().equalTo(UserFields.NAME, username).findFirst()
+                Utils.user = DB.realm.where<User>().equalTo(UserFields.USERNAME, username).findFirst()
                 if (Utils.user == null)
                 {
                     DB.realm.beginTransaction()
@@ -120,7 +149,7 @@ class LoginActivity : AppCompatActivity() {
                     DB.realm.commitTransaction()
                 }
 
-                val offline = DB.realm.where<User>().equalTo(UserFields.NAME, "OFFLINE").findFirst()
+                val offline = DB.realm.where<User>().equalTo(UserFields.USERNAME, "OFFLINE").findFirst()
                 if (offline != null && Utils.user != null)
                 {
                     val user = Utils.user!!

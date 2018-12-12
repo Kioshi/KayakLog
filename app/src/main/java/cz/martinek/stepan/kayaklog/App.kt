@@ -20,7 +20,6 @@ class App : Application()
         super.onCreate()
 
         // Initialize Gson for parsing JSONs
-        val gson = GsonBuilder().create()
         val httpClientBuilder = OkHttpClient.Builder()
         if (BuildConfig.DEBUG)
         {
@@ -31,6 +30,9 @@ class App : Application()
         }
 
         httpClientBuilder.addInterceptor(AuthInterceptor())
+
+        val gsonBuilder = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+        val gson = gsonBuilder.create()
 
          API.retrofitAPI = Retrofit.Builder()
                 .baseUrl(ServerInfo.ADDRESS)

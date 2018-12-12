@@ -7,7 +7,7 @@ import io.realm.annotations.PrimaryKey
 open class User() : RealmObject() {
 
     @PrimaryKey
-    var name: String? = null
+    var username: String? = null
     var trips: RealmList<Trip>? = null
     var achievements: RealmList<AcquiredAchievement>? = null
 }

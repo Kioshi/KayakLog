@@ -11,6 +11,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Switch
@@ -24,12 +25,15 @@ import com.google.android.gms.maps.model.PolylineOptions
 import cz.martinek.stepan.kayaklog.model.AcquiredAchievement
 import cz.martinek.stepan.kayaklog.model.Path
 import cz.martinek.stepan.kayaklog.model.Trip
+import cz.martinek.stepan.kayaklog.retrofit.API
 import kotlinx.android.synthetic.main.activity_trip.*
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import org.jetbrains.anko.*
 import java.io.Serializable
+import java.lang.Exception
 import java.util.*
 
 class TripActivity : AppCompatActivity(), LocationListener, Serializable {
@@ -163,18 +167,30 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
 
     fun saveTrip(name: String, desc: String, public: Boolean)
     {
-        DB.realm.beginTransaction()
-        val trip = DB.realm.createObject(Trip::class.java, UUID.randomUUID().toString())
-        trip.name = name
-        trip.desc = desc
-        trip.publiclyAvailable = public
-        trip.duration = duration
-        trip.timeCreated = Calendar.getInstance().time
-        trip.path!!.addAll(path.map { DB.realm.copyToRealm(it) })
-        Utils.user?.trips?.add(trip)
-        DB.realm.commitTransaction()
-        //TODO sync with server
-        Toast.makeText(this,"Trip was saved...", Toast.LENGTH_LONG).show()
+        val context = this
+        ui.launch {
+            DB.realm.beginTransaction()
+            val trip = DB.realm.createObject(Trip::class.java, UUID.randomUUID().toString())
+            trip.name = name
+            trip.description = desc
+            trip.publiclyAvailable = public
+            trip.duration = duration
+            trip.timeCreated = Calendar.getInstance().time
+            trip.path!!.addAll(path.map { DB.realm.copyToRealm(it) })
+            Utils.user?.trips?.add(trip)
+            DB.realm.commitTransaction()
+            Toast.makeText(context, "Trip was saved...", Toast.LENGTH_LONG).show()
+            val copy = DB.realm.copyFromRealm(trip)
+            bg.async {
+                try {
+                    API.insertTrip(context, copy)
+                }
+                catch (ex: Exception)
+                {
+                    Log.d("Retrofit:InsertTrip", ex.message)
+                }
+            }.await()
+        }
     }
 
     // LocationListener call backs
@@ -258,8 +274,7 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
 
     fun rewardAchievement(id: Int) {
         lateinit var name: String
-        when(id)
-        {
+        when (id) {
             0 -> name = "Speed over 10m/s"
             1 -> name = "Speed over 20m/s"
             2 -> name = "Speed over 30m/s"
@@ -271,16 +286,27 @@ class TripActivity : AppCompatActivity(), LocationListener, Serializable {
             8 -> name = "Duration over 3h"
         }
 
-        DB.realm.beginTransaction()
-        val achiev = DB.realm.createObject(AcquiredAchievement::class.java, UUID.randomUUID().toString())
-        achiev.achievementId = id
-        achiev.acquiredTime = Calendar.getInstance().time
-        achiev.extraInfo = name
-        Utils.user?.achievements?.add(achiev)
-        DB.realm.commitTransaction()
-        //TODO sync with server
 
-        Toast.makeText(this,"Congratulation! You were awarded with new achievement '$name'.", Toast.LENGTH_LONG).show()
+        val context = this
+        ui.launch {
+            DB.realm.beginTransaction()
+            val achiev = DB.realm.createObject(AcquiredAchievement::class.java, UUID.randomUUID().toString())
+            achiev.achievementId = id
+            achiev.acquiredTime = Calendar.getInstance().time
+            achiev.extraInfo = name
+            Utils.user?.achievements?.add(achiev)
+            DB.realm.commitTransaction()
+            val copy = DB.realm.copyFromRealm(achiev)
+            Toast.makeText(context, "Congratulation! You were awarded with new achievement '$name'.", Toast.LENGTH_LONG).show()
+
+            bg.async {
+                try {
+                API.insertAchievement(context, copy)
+                } catch (ex: Exception) {
+                    Log.d("Retrofit:InsertAchiev", ex.message)
+                }
+            }.await()
+        }
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {}

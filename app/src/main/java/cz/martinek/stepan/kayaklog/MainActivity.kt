@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        userNameView.text = Utils.user!!.name
+        userNameView.text = Utils.user!!.username
     }
 
     //Intent

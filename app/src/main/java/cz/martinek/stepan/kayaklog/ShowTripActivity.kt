@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.location.Location
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.Switch
@@ -122,7 +123,7 @@ class ShowTripActivity : AppCompatActivity() {
     private fun updateTextViews() {
         durationTV.text = "Duration: ${trip.duration/60} min"
         nameTV.text = "Name: ${trip.name}"
-        descTV.text = "Decription: ${trip.desc}"
+        descTV.text = "Decription: ${trip.description}"
         val state = if (trip.publiclyAvailable) "Public" else "Private"
         stateTV.text = "State: ${state}"
         dateTV.text = "Date: ${trip.timeCreated}"
@@ -132,6 +133,7 @@ class ShowTripActivity : AppCompatActivity() {
     {
         if (!localTrip)
             return;
+        val context = this
 
         alert("Edit trip") {
             titleResource = R.string.saveTripTitle
@@ -147,7 +149,7 @@ class ShowTripActivity : AppCompatActivity() {
                     }
                     desc  = editText {
                         hintResource = R.string.descriptionOfTrip
-                        setText(trip.desc.toString())
+                        setText(trip.description.toString())
                     }
                     public = switch{
                         textResource = R.string.isTripPublic
@@ -157,14 +159,25 @@ class ShowTripActivity : AppCompatActivity() {
                 }
             }
             positiveButton("Save")  {
-                DB.realm.beginTransaction()
-                trip.name = name.text.toString()
-                trip.desc = desc.text.toString()
-                trip.publiclyAvailable = public.isChecked
-                DB.realm.commitTransaction()
-                updateTextViews()
-                //TODO sync with server
-                it.dismiss()
+                ui.launch {
+                    DB.realm.beginTransaction()
+                    trip.name = name.text.toString()
+                    trip.description = desc.text.toString()
+                    trip.publiclyAvailable = public.isChecked
+                    DB.realm.commitTransaction()
+                    updateTextViews()
+                    bg.async {
+                        try {
+                            API.updateTrip(context, DB.realm.copyFromRealm(trip))
+                        }
+                        catch (ex: Exception)
+                        {
+                            Log.d("Retrofit:UpdateTrip", ex.message)
+                        }
+                    }.await()
+                    it.dismiss()
+
+                }
             }
             negativeButton("Cancel")  { it.dismiss() }
         }.show()

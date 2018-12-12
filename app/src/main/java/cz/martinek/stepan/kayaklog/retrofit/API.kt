@@ -1,6 +1,8 @@
 package cz.martinek.stepan.kayaklog.retrofit
 
 import android.content.Context
+import com.google.android.gms.tasks.Tasks.call
+import cz.martinek.stepan.kayaklog.model.AcquiredAchievement
 import cz.martinek.stepan.kayaklog.model.Trip
 import cz.martinek.stepan.kayaklog.model.User
 import retrofit2.Response
@@ -22,7 +24,7 @@ object API
 {
     lateinit var retrofitAPI: RetrofitAPI
 
-
+/*
     private fun <T,A>call(context: Context, type: Requests, arg: A? = null, arg2: Trip? = null) : T?
     {
         val res: Response<T>
@@ -61,7 +63,51 @@ object API
     fun getUser(context: Context, id: Int) = call<User, Int>(context, Requests.GET_USER_ID, id);
     fun updateUser(context: Context, user: User) = call<User, User>(context, Requests.POST_USER, user);
     fun deleteUser(context: Context, id: Int) = call<Unit, Int>(context, Requests.DELETE_USER, id);
+    fun updateTrip(context: Context, guid: String, trip: Trip) = call<Unit, String>(context, Requests.POST_TRIP, guid, trip);
+    fun deleteTrip(context: Context, guid: String) = call<Unit, String>(context, Requests.DELETE_TRIP, guid);
     fun getTrips(context: Context) = call<List<Trip>, Unit>(context, Requests.GET_TRIPS);
+    */
+
+    fun getUser(context: Context): User?
+    {
+        val res =  API.retrofitAPI.getUser_().execute()
+
+        ServerInfo.relog(context)
+
+        if (res.isSuccessful)
+        {
+            when(res.code() / 100)
+            {
+                2 -> {}
+                //Not supose to happen
+                3 -> throw RedirectException(res.code(), res.message())
+                4 -> throw UnauthenticatedException(res.code(), res.message())
+                5 -> throw  ServerErrorException(res.code(), res.message())
+                else -> throw ServerErrorException(res.code(), res.message())
+            }
+        }
+        return res.body();
+    }
+    fun updateUser(context: Context, user: User): User?
+    {
+        val res =  API.retrofitAPI.updateUser_(user).execute()
+
+        ServerInfo.relog(context)
+
+        if (res.isSuccessful)
+        {
+            when(res.code() / 100)
+            {
+                2 -> {}
+                //Not supose to happen
+                3 -> throw RedirectException(res.code(), res.message())
+                4 -> throw UnauthenticatedException(res.code(), res.message())
+                5 -> throw  ServerErrorException(res.code(), res.message())
+                else -> throw ServerErrorException(res.code(), res.message())
+            }
+        }
+        return res.body();
+    }
     fun getTrip(context: Context, guid: String): Trip?
     {
         val res =  API.retrofitAPI.getTrip_(guid).execute()
@@ -72,6 +118,7 @@ object API
         {
             when(res.code() / 100)
             {
+                2 -> {}
                 //Not supose to happen
                 3 -> throw RedirectException(res.code(), res.message())
                 4 -> throw UnauthenticatedException(res.code(), res.message())
@@ -81,6 +128,64 @@ object API
         }
         return res.body();
     }
-    fun updateTrip(context: Context, guid: String, trip: Trip) = call<Unit, String>(context, Requests.POST_TRIP, guid, trip);
-    fun deleteTrip(context: Context, guid: String) = call<Unit, String>(context, Requests.DELETE_TRIP, guid);
+    fun insertTrip(context: Context, trip: Trip): Unit?
+    {
+        val res =  API.retrofitAPI.insertTrip_(trip).execute()
+
+        ServerInfo.relog(context)
+
+        if (res.isSuccessful)
+        {
+            when(res.code() / 100)
+            {
+                2 -> {}
+                //Not supose to happen
+                3 -> throw RedirectException(res.code(), res.message())
+                4 -> throw UnauthenticatedException(res.code(), res.message())
+                5 -> throw  ServerErrorException(res.code(), res.message())
+                else -> throw ServerErrorException(res.code(), res.message())
+            }
+        }
+        return res.body();
+    }
+    fun insertAchievement(context: Context, achiev: AcquiredAchievement): Unit?
+    {
+        val res =  API.retrofitAPI.insertAchievement_(achiev).execute()
+
+        ServerInfo.relog(context)
+
+        if (res.isSuccessful)
+        {
+            when(res.code() / 100)
+            {
+                2 -> {}
+                //Not supose to happen
+                3 -> throw RedirectException(res.code(), res.message())
+                4 -> throw UnauthenticatedException(res.code(), res.message())
+                5 -> throw  ServerErrorException(res.code(), res.message())
+                else -> throw ServerErrorException(res.code(), res.message())
+            }
+        }
+        return res.body();
+    }
+
+    fun updateTrip(context: Context, trip: Trip): Unit? {
+        val res =  API.retrofitAPI.updateTrip_(trip).execute()
+
+        ServerInfo.relog(context)
+
+        if (res.isSuccessful)
+        {
+            when(res.code() / 100)
+            {
+                2 -> {}
+                //Not supose to happen
+                3 -> throw RedirectException(res.code(), res.message())
+                4 -> throw UnauthenticatedException(res.code(), res.message())
+                5 -> throw  ServerErrorException(res.code(), res.message())
+                else -> throw ServerErrorException(res.code(), res.message())
+            }
+        }
+        return res.body();
+    }
 }
