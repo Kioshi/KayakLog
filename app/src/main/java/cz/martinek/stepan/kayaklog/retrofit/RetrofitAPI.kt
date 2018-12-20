@@ -40,6 +40,9 @@ interface RetrofitAPI
     @POST("users")
     fun updateUser_(@Body user: User) : Call<User>
 
+    @POST("test")
+    fun testUser_(@Body user: User) : Call<User>
+
     @DELETE("users/{id}")
     fun deleteUser_(@Path("id") id : Int): Call<Unit>
 

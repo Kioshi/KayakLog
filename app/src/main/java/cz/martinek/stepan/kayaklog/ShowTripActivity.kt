@@ -18,6 +18,7 @@ import com.google.android.gms.maps.model.PolylineOptions
 import cz.martinek.stepan.kayaklog.model.Trip
 import cz.martinek.stepan.kayaklog.model.TripFields
 import cz.martinek.stepan.kayaklog.retrofit.API
+import cz.martinek.stepan.kayaklog.retrofit.API.deleteTrip
 import cz.martinek.stepan.kayaklog.retrofit.RedirectException
 import cz.martinek.stepan.kayaklog.retrofit.ServerErrorException
 import cz.martinek.stepan.kayaklog.retrofit.UnauthenticatedException
@@ -202,12 +203,26 @@ class ShowTripActivity : AppCompatActivity() {
         if (!localTrip)
             return;
 
+        val context = this
+
         alert("Are you sure you want to delete current trip?") {
             positiveButton("Yes")  {
-                DB.realm.beginTransaction()
-                trip.deleteFromRealm()
-                DB.realm.commitTransaction()
-                finish()
+                ui.launch {
+                    val guid = trip.guid ?: ""
+
+                    bg.async {
+                        try {
+                            API.deleteTrip(context, guid)
+                        } catch (ex: Exception) {
+                            Log.d("Retrofit:UpdateTrip", ex.message)
+                        }
+                    }.await()
+
+                    DB.realm.beginTransaction()
+                    trip.deleteFromRealm()
+                    DB.realm.commitTransaction()
+                    finish()
+                }
             }
             negativeButton("No")  {  it.dismiss() }
         }.show()
